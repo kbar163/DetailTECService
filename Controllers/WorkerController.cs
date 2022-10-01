@@ -34,6 +34,16 @@ namespace TallerTECService.Controllers
 
         }
 
+        // GET api/manage/worker/payment/types
+        [HttpGet("payment/types")]
+        public ActionResult<MultivalueRole> GetPaymentTypes()
+        {
+
+            var response = _repository.GetPaymentTypes();
+            return Ok(response);
+
+        }
+
         
 
     }

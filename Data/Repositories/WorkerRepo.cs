@@ -29,9 +29,10 @@ namespace DetailTECService.Data
             MultivaluePayment response;
             string query= @"SELECT *
             FROM TIPO_PAGO";
+            
             DataTable dbTable = GetTableData(query);
             response = PaymentMessage(dbTable);
-            throw new NotImplementedException();
+            return response;
         }
 
         
