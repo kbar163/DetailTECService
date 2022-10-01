@@ -7,6 +7,7 @@ namespace DetailTECService.Data
     public interface IWorkerRepository
     {
         MultivalueRole GetRoles();
+        MultivaluePayment GetPaymentTypes();
         
     }
 }
