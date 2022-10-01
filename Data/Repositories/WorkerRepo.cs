@@ -19,6 +19,11 @@ namespace DetailTECService.Data
 
         }
 
+        public ActionResponse AddWorker(Worker newWorker)
+        {
+            throw new NotImplementedException();
+        }
+
         //Proceso: Punto de entrada del proceso de obtener los tipos de pago de trabajadores, hace uso de funciones
         //auxiliares que obtienen informacion de la base de datos y dan formato a la respuesta
         //Salida: MultivaluePayment response: un objeto que tiene una propiedad booleana que indica si la 
@@ -153,5 +158,7 @@ namespace DetailTECService.Data
             
             return response;
         }
+
+        
     }
 }

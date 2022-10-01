@@ -23,6 +23,17 @@ namespace TallerTECService.Controllers
         {
             _repository = repository;
         }
+
+        // POST api/manage/worker
+        [HttpPost]
+        public ActionResult<ActionResponse> AddWorker(Worker newWorker)
+        {
+
+            var response = _repository.AddWorker(newWorker);
+            return Ok(response);
+             
+
+        }
         
         // GET api/manage/worker/roles
         [HttpGet("roles")]

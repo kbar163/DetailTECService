@@ -8,6 +8,8 @@ namespace DetailTECService.Data
     {
         MultivalueRole GetRoles();
         MultivaluePayment GetPaymentTypes();
+        ActionResponse AddWorker(Worker newWorker);
         
     }
+
 }
