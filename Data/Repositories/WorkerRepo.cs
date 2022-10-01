@@ -15,8 +15,8 @@ namespace DetailTECService.Data
             _connectionString = config.GetValue<string>("ConnectionStrings:DetailTECDB");
 
         }
-        
-        public AuthResponse GetRoles()
+
+        public MultivalueRole GetRoles()
         {
             throw new NotImplementedException();
         }

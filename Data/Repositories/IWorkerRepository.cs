@@ -6,7 +6,7 @@ namespace DetailTECService.Data
 {
     public interface IWorkerRepository
     {
-        AuthResponse GetRoles();
+        MultivalueRole GetRoles();
         
     }
 }
