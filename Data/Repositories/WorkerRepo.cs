@@ -21,8 +21,70 @@ namespace DetailTECService.Data
 
         public ActionResponse AddWorker(Worker newWorker)
         {
-            throw new NotImplementedException();
+            ActionResponse response;
+            string query = @"INSERT INTO TRABAJADOR
+            VALUES (@cedula , @nacimiento , @nombre ,
+            @apellido_1 , @apellido_2 , @rol , @pago , @ingreso , @password)";
+            response = InsertWorkerDB(query, newWorker);
+            return response;
+            
+            
         }
+
+        public ActionResponse InsertWorkerDB(string query, Worker newWorker)
+        {
+            ActionResponse response = new ActionResponse();
+            
+            
+            try
+            {
+                
+
+                if(newWorker.fecha_ingreso != null && newWorker.fecha_nacimiento != null)
+                {
+                    newWorker.fecha_nacimiento = newWorker.fecha_nacimiento.Substring(0,10);
+                    newWorker.fecha_nacimiento = newWorker.fecha_ingreso.Substring(0,10);
+                }
+                
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@cedula", newWorker.cedula_trabajador));
+                        command.Parameters.Add(new SqlParameter("@nacimiento", newWorker.fecha_nacimiento));
+                        command.Parameters.Add(new SqlParameter("@nombre", newWorker.nombre));
+                        command.Parameters.Add(new SqlParameter("@apellido_1", newWorker.primer_apellido));
+                        command.Parameters.Add(new SqlParameter("@apellido_2", newWorker.segundo_apellido));
+                        command.Parameters.Add(new SqlParameter("@rol", newWorker.id_rol));
+                        command.Parameters.Add(new SqlParameter("@pago", newWorker.id_tipo_pago));
+                        command.Parameters.Add(new SqlParameter("@ingreso", newWorker.fecha_nacimiento));
+                        command.Parameters.Add(new SqlParameter("@password", newWorker.password_trabajador));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();    
+                        response.actualizado = true;
+                        response.mensaje = "Trabajador creado exitosamente";
+                    } 
+                }   
+            }
+
+            catch (ArgumentException e)
+            {
+                Console.WriteLine("ERROR: " + e.Message +  "triggered by " + e.Source);
+                response.actualizado = false;
+                response.mensaje = "Error al crear al trabajador";
+            }
+
+            catch(SqlException e)
+            {
+                Console.WriteLine("ERROR: " + e.Message + "triggered by " + e.Source);
+                response.actualizado = false;
+                response.mensaje = "Error al crear al trabajador";
+            }
+
+            return response;
+        }
+
 
         //Proceso: Punto de entrada del proceso de obtener los tipos de pago de trabajadores, hace uso de funciones
         //auxiliares que obtienen informacion de la base de datos y dan formato a la respuesta
