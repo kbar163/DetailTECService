@@ -10,6 +10,7 @@ namespace DetailTECService.Data
         MultivaluePayment GetPaymentTypes();
         ActionResponse AddWorker(Worker newWorker);
         ActionResponse ModifyWorker(Worker newWorker);
+        ActionResponse DeleteWorker(WorkerIdRequest deleteId);
         
     }
 

@@ -57,6 +57,52 @@ namespace DetailTECService.Data
             return response;
         
         }
+        //Entrada: WorkerIdRequest deleteId, tiene una propiedad string que representa la cedula de un trabajador
+        //Proceso: Se crea un query para eliminar de la DB al trabajador cuyo CEDULA_TRABAJADOR haga match con
+        //la propiedad cedula_trabajador de deleteId.
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar DELETE sobre la base de datos en la tabla TRABAJADOR
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse DeleteWorker(WorkerIdRequest deleteId)
+        {
+            ActionResponse response = new ActionResponse();
+            string query = @"DELETE FROM TRABAJADOR
+            WHERE CEDULA_TRABAJADOR = @cedula";
+            
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@cedula", deleteId.cedula_trabajador));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        response.actualizado = true;
+                        response.mensaje = "Trabajador eliminado exitosamente";
+                        
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = "Error al eliminar trabajador";
+                }
+            }
+
+            return response;
+        }
+ 
 
 
         //Proceso: 
@@ -116,22 +162,18 @@ namespace DetailTECService.Data
                 }   
             }
 
-            catch (ArgumentException e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ERROR: " + e.Message +  "triggered by " + e.Source);
-                response.actualizado = false;
-                response.mensaje = $"Error al {infinitive} al trabajador";
-                
-                
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = $"Error al {infinitive} al trabajador";
+                }
             }
 
-            catch(SqlException e)
-            {
-                Console.WriteLine("ERROR: " + e.Message + "triggered by " + e.Source);
-                response.actualizado = false;
-                response.mensaje = $"Error al {infinitive} al trabajador";
-            }
-
+            
             return response;
         }
 
@@ -195,16 +237,16 @@ namespace DetailTECService.Data
                 }   
             }
 
-            catch (ArgumentException e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ERROR: " + e.Message +  "triggered by " + e.Source);
+                if(ex is ArgumentException || ex is SqlException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                }
+
             }
 
-            catch(SqlException e)
-            {
-                Console.WriteLine("ERROR: " + e.Message + "triggered by " + e.Source);
-            }
-
+            
             return data;
         }
 

@@ -44,6 +44,16 @@ namespace TallerTECService.Controllers
             return Ok(response); 
 
         }
+
+        // DELETE api/manage/worker
+        [HttpDelete]
+        public ActionResult<ActionResponse> DeleteWorker(WorkerIdRequest deletionId)
+        {
+            
+            var response = _repository.DeleteWorker(deletionId);
+            return Ok(response);
+
+        }
         
         // GET api/manage/worker/roles
         [HttpGet("roles")]
