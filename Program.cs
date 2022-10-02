@@ -11,6 +11,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<ILoginRepository, LoginRepo>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepo>();
+builder.Services.AddScoped<IOfficeRepository, OfficeRepo>();
 
 
 //Middleware utilizado para habilitar politicas de CORS en los endpoints del REST API.
