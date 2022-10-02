@@ -34,5 +34,36 @@ namespace TallerTECService.Controllers
 
         }
 
+        // POST api/manage/office
+        [HttpPost]
+        public ActionResult<ActionResponse> AddOffice(Office newOffice)
+        {
+
+            var response = _repository.AddOffice(newOffice);
+            return Ok(response);
+             
+
+        }
+
+        // PATCH api/manage/office
+        [HttpPatch]
+        public ActionResult<ActionResponse> ModifyOffice(Office newOffice)
+        {
+
+            var response = _repository.ModifyOffice(newOffice);
+            return Ok(response); 
+
+        }
+
+        // DELETE api/manage/office
+        [HttpDelete]
+        public ActionResult<ActionResponse> DeleteOffice(OfficeIdRequest deletionId)
+        {
+            
+            var response = _repository.DeleteOffice(deletionId);
+            return Ok(response);
+
+        }
+
     }
 }

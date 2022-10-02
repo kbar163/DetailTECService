@@ -7,6 +7,9 @@ namespace DetailTECService.Data
     public interface IOfficeRepository
     {
         MultivalueOffice GetAllOffices();
+        ActionResponse AddOffice(Office newOffice);
+        ActionResponse ModifyOffice(Office newOffice);
+        ActionResponse DeleteOffice(OfficeIdRequest deleteId);
         
     }
 
