@@ -106,8 +106,12 @@ namespace DetailTECService.Data
         public MultivalueWorker GetAllWorkers()
         {
             MultivalueWorker response;
-            string query= @"SELECT *
-            FROM TRABAJADOR";
+            string query= @"SELECT TRABAJADOR.CEDULA_TRABAJADOR, TRABAJADOR.NOMBRE, TRABAJADOR.PRIMER_APELLIDO,
+            TRABAJADOR.SEGUNDO_APELLIDO, TRABAJADOR.FECHA_NACIMIENTO, TRABAJADOR.FECHA_INGRESO, TRABAJADOR.ID_ROL, ROL.TIPO AS TIPO_ROL,
+            TRABAJADOR.ID_PAGO, TIPO_PAGO.TIPO AS TIPO_PAGO, TRABAJADOR.PASSWORD_TRABAJADOR
+            FROM TRABAJADOR
+            INNER JOIN ROL ON TRABAJADOR.ID_ROL=ROL.ID_ROL
+            INNER JOIN TIPO_PAGO ON TRABAJADOR.ID_PAGO=TIPO_PAGO.ID_TIPO_PAGO";
             DataTable dbTable = GetTableData(query);
             response = AllWorkersMessage(dbTable);
             return response;
@@ -354,7 +358,10 @@ namespace DetailTECService.Data
                     DateTime hiredDate = (DateTime)dbTable.Rows[index]["FECHA_INGRESO"];
                     string formatedHiredDate = hiredDate
                     .ToString("o",System.Globalization.CultureInfo.InvariantCulture);
+                    worker.fecha_ingreso = formatedHiredDate;
                     worker.password_trabajador = (string)dbTable.Rows[index]["PASSWORD_TRABAJADOR"];
+                    worker.tipo_rol = (string)dbTable.Rows[index]["TIPO_ROL"];
+                    worker.tipo_pago = (string)dbTable.Rows[index]["TIPO_PAGO"];
                     response.trabajadores.Add(worker);
 
                 }
