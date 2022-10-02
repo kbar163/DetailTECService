@@ -19,6 +19,165 @@ namespace DetailTECService.Data
 
         }
 
+        //Proceso: Punto de entrada del proceso de crear un trabajador, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse AddWorker(Worker newWorker)
+        {
+            ActionResponse response;
+            string query = @"INSERT INTO TRABAJADOR
+            VALUES (@cedula , @nacimiento , @nombre ,
+            @apellido_1 , @apellido_2 , @rol , @pago , @ingreso , @password)";
+            response = WriteWorkerDB(query, newWorker);
+            return response;
+        
+        }
+
+        //Proceso: Punto de entrada del proceso de modifica un trabajador, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse ModifyWorker(Worker newWorker)
+        {
+            ActionResponse response;
+            string query = @"UPDATE TRABAJADOR
+            SET FECHA_NACIMIENTO = @nacimiento ,
+            NOMBRE = @nombre ,
+            PRIMER_APELLIDO = @apellido_1 ,
+            SEGUNDO_APELLIDO = @apellido_2 ,
+            ID_ROL = @rol ,
+            ID_PAGO = @pago ,
+            FECHA_INGRESO = @ingreso ,
+            PASSWORD_TRABAJADOR = @password
+            WHERE CEDULA_TRABAJADOR = @cedula";
+            response = WriteWorkerDB(query, newWorker);
+            return response;
+        
+        }
+        //Entrada: WorkerIdRequest deleteId, tiene una propiedad string que representa la cedula de un trabajador
+        //Proceso: Se crea un query para eliminar de la DB al trabajador cuyo CEDULA_TRABAJADOR haga match con
+        //la propiedad cedula_trabajador de deleteId.
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar DELETE sobre la base de datos en la tabla TRABAJADOR
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse DeleteWorker(WorkerIdRequest deleteId)
+        {
+            ActionResponse response = new ActionResponse();
+            string query = @"DELETE FROM TRABAJADOR
+            WHERE CEDULA_TRABAJADOR = @cedula";
+            
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@cedula", deleteId.cedula_trabajador));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        response.actualizado = true;
+                        response.mensaje = "Trabajador eliminado exitosamente";
+                        
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = "Error al eliminar trabajador";
+                }
+            }
+
+            return response;
+        }
+ 
+
+
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla TRABAJADOR
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse WriteWorkerDB(string query, Worker newWorker)
+        {
+            ActionResponse response = new ActionResponse();
+            string verb = "";
+            string infinitive = "";
+
+                 
+            
+            try
+            {
+                if (query.Contains("INSERT"))
+                {
+                    verb = "creado";
+                    infinitive = "crear";
+                }
+
+                if (query.Contains("UPDATE"))
+                {
+                    verb = "actualizado";
+                    infinitive = "actualizar";
+                }
+                
+                if(newWorker.fecha_ingreso != null && newWorker.fecha_nacimiento != null)
+                {
+                    newWorker.fecha_nacimiento = newWorker.fecha_nacimiento.Substring(0,10);
+                    newWorker.fecha_nacimiento = newWorker.fecha_ingreso.Substring(0,10);
+                }
+                
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@cedula", newWorker.cedula_trabajador));
+                        command.Parameters.Add(new SqlParameter("@nacimiento", newWorker.fecha_nacimiento));
+                        command.Parameters.Add(new SqlParameter("@nombre", newWorker.nombre));
+                        command.Parameters.Add(new SqlParameter("@apellido_1", newWorker.primer_apellido));
+                        command.Parameters.Add(new SqlParameter("@apellido_2", newWorker.segundo_apellido));
+                        command.Parameters.Add(new SqlParameter("@rol", newWorker.id_rol));
+                        command.Parameters.Add(new SqlParameter("@pago", newWorker.id_tipo_pago));
+                        command.Parameters.Add(new SqlParameter("@ingreso", newWorker.fecha_nacimiento));
+                        command.Parameters.Add(new SqlParameter("@password", newWorker.password_trabajador));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();    
+                        response.actualizado = true;
+                        response.mensaje = $"Trabajador {verb} exitosamente";
+
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = $"Error al {infinitive} al trabajador";
+                }
+            }
+
+            
+            return response;
+        }
+
+
         //Proceso: Punto de entrada del proceso de obtener los tipos de pago de trabajadores, hace uso de funciones
         //auxiliares que obtienen informacion de la base de datos y dan formato a la respuesta
         //Salida: MultivaluePayment response: un objeto que tiene una propiedad booleana que indica si la 
@@ -78,16 +237,16 @@ namespace DetailTECService.Data
                 }   
             }
 
-            catch (ArgumentException e)
+            catch (Exception ex)
             {
-                Console.WriteLine("ERROR: " + e.Message +  "triggered by " + e.Source);
+                if(ex is ArgumentException || ex is SqlException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                }
+
             }
 
-            catch(SqlException e)
-            {
-                Console.WriteLine("ERROR: " + e.Message + "triggered by " + e.Source);
-            }
-
+            
             return data;
         }
 
@@ -153,5 +312,7 @@ namespace DetailTECService.Data
             
             return response;
         }
+
+        
     }
 }
