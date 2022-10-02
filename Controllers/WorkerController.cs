@@ -35,6 +35,16 @@ namespace TallerTECService.Controllers
 
         }
 
+        // GET api/manage/worker/all
+        [HttpGet("all")]
+        public ActionResult<MultivalueWorker> GetAllWorkers()
+        {
+
+            var response = _repository.GetAllWorkers();
+            return Ok(response);
+
+        }
+
         // PATCH api/manage/worker
         [HttpPatch]
         public ActionResult<ActionResponse> ModifyWorker(Worker newWorker)

@@ -102,6 +102,16 @@ namespace DetailTECService.Data
 
             return response;
         }
+
+        public MultivalueWorker GetAllWorkers()
+        {
+            MultivalueWorker response;
+            string query= @"SELECT *
+            FROM TRABAJADOR";
+            DataTable dbTable = GetTableData(query);
+            response = AllWorkersMessage(dbTable);
+            return response;
+        }
  
 
 
@@ -302,6 +312,50 @@ namespace DetailTECService.Data
                     payment.id_tipo_pago = (int)dbTable.Rows[index]["ID_TIPO_PAGO"];
                     payment.tipo_pago = (string)dbTable.Rows[index]["TIPO"];
                     response.tipos_pago.Add(payment);
+
+                }
+            }
+            else
+            {
+                response.exito = false;
+            }
+            
+            return response;
+        }
+
+
+        //Entradas: 
+        //DataTable dbTable: DataTable que potencialmente contiene informacion obtenida de la base de datos.
+        //Proceso: Se revisa si dbTable tiene contenido, de ser asi, se cambia la propiedad boolean de la respuesta
+        //a true y se mapea cada uno de las filas de la tabla a objetos Worker que son agregados a la propiedad lista trabajadores.
+        //Si la tabla no tiene contenido, se cambia el booleano exito a false.
+        //Multivalue response: Un objeto que representa el mensaje a enviar al frontend.
+        private MultivalueWorker AllWorkersMessage(DataTable dbTable)
+        {
+            var response = new MultivalueWorker();
+            response.trabajadores = new List<Worker>();
+            
+            if(dbTable.Rows.Count !=0)
+            {
+                response.exito = true;
+                for(int index = 0; index < dbTable.Rows.Count; index++)
+                {
+                    Worker worker = new Worker();
+                    worker.cedula_trabajador = (string)dbTable.Rows[index]["CEDULA_TRABAJADOR"];
+                    DateTime birthDate = (DateTime)dbTable.Rows[index]["FECHA_NACIMIENTO"];
+                    string formatedBirthDate = birthDate
+                    .ToString("o",System.Globalization.CultureInfo.InvariantCulture);
+                    worker.fecha_nacimiento = formatedBirthDate;
+                    worker.nombre = (string)dbTable.Rows[index]["NOMBRE"];
+                    worker.primer_apellido = (string)dbTable.Rows[index]["PRIMER_APELLIDO"];
+                    worker.segundo_apellido = (string)dbTable.Rows[index]["SEGUNDO_APELLIDO"];
+                    worker.id_rol = (int)dbTable.Rows[index]["ID_ROL"];
+                    worker.id_tipo_pago = (int)dbTable.Rows[index]["ID_ROL"];
+                    DateTime hiredDate = (DateTime)dbTable.Rows[index]["FECHA_INGRESO"];
+                    string formatedHiredDate = hiredDate
+                    .ToString("o",System.Globalization.CultureInfo.InvariantCulture);
+                    worker.password_trabajador = (string)dbTable.Rows[index]["PASSWORD_TRABAJADOR"];
+                    response.trabajadores.Add(worker);
 
                 }
             }
