@@ -6,7 +6,7 @@ namespace DetailTECService.Models
     public class MultivalueWorker
     {
         public bool exito { get; set; }
-        public List<Payment>? trabajadores { get; set; }
+        public List<Worker>? trabajadores { get; set; }
 
     }
 }
