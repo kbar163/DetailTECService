@@ -118,6 +118,161 @@ namespace DetailTECService.Data
             return response;
         }
 
+        //Proceso: Punto de entrada del proceso de crear una sucursal, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse AddOffice(Office newOffice)
+        {
+            ActionResponse response;
+            string query = @"INSERT INTO SUCURSAL
+            VALUES (@nombre_sucursal , @telefono , @cedula_trabajador_gerente ,
+            @provincia , @canton , @distrito , @fecha_apertura , @fecha_inicio_gerencia )";
+            response = WriteOfficeDB(query, newOffice);
+            return response;
+        
+        }
+
+        //Proceso: Punto de entrada del proceso de modifica una sucursal, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse ModifyOffice(Office newOffice)
+        {
+            ActionResponse response;
+            string query = @"UPDATE SUCURSAL
+            SET FECHA_APERTURA = @fecha_apertura ,
+            NOMBRE_SUCURSAL = @nombre_sucursal ,
+            TELEFONO = @telefono ,
+            CEDULA_TRABAJADOR_GERENTE = @cedula_trabajador_gerente ,
+            PROVINCIA = @provincia ,
+            CANTON = @canton ,
+            DISTRITO = @distrito ,
+            FECHA_INICIO_GERENCIA = @fecha_inicio_gerencia 
+            WHERE NOMBRE_SUCURSAL = @nombre_sucursal";
+            response = WriteOfficeDB(query, newOffice);
+            return response;
+        
+        }
+        //Entrada: OfficeIdRequest deleteId, tiene una propiedad string que representa el nombre de una sucrsal
+        //Proceso: Se crea un query para eliminar de la DB a la sucursal cuyo NOMBRE_SUCURSAL haga match con
+        //la propiedad nombre_sucursal de deleteId.
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar DELETE sobre la base de datos en la tabla TRABAJADOR
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse DeleteOffice(OfficeIdRequest deleteId)
+        {
+            ActionResponse response = new ActionResponse();
+            string query = @"DELETE FROM SUCURSAL
+            WHERE NOMBRE_SUCURSAL = @nombre_sucursal";
+            
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nombre_sucursal", deleteId.nombre_sucursal));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        response.actualizado = true;
+                        response.mensaje = "Sucursal eliminada exitosamente";
+                        
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = "Error al eliminar sucursal";
+                }
+            }
+
+            return response;
+        }
+
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla TRABAJADOR
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse WriteOfficeDB(string query, Office newOffice)
+        {
+            ActionResponse response = new ActionResponse();
+            string verb = "";
+            string infinitive = "";
+
+                 
+            
+            try
+            {
+                if (query.Contains("INSERT"))
+                {
+                    verb = "creada";
+                    infinitive = "crear";
+                }
+
+                if (query.Contains("UPDATE"))
+                {
+                    verb = "actualizada";
+                    infinitive = "actualizar";
+                }
+                
+                if(newOffice.fecha_apertura != null && newOffice.fecha_inicio_gerencia != null)
+                {
+                    newOffice.fecha_apertura = newOffice.fecha_apertura.Substring(0,10);
+                    newOffice.fecha_inicio_gerencia = newOffice.fecha_inicio_gerencia.Substring(0,10);
+                }
+                
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nombre_sucursal", newOffice.nombre_sucursal));
+                        command.Parameters.Add(new SqlParameter("@telefono", newOffice.telefono));
+                        command.Parameters.Add(new SqlParameter("@cedula_trabajador_gerente", newOffice.cedula_trabajador_gerente));
+                        command.Parameters.Add(new SqlParameter("@provincia", newOffice.provincia));
+                        command.Parameters.Add(new SqlParameter("@canton", newOffice.canton));
+                        command.Parameters.Add(new SqlParameter("@distrito", newOffice.distrito));
+                        command.Parameters.Add(new SqlParameter("@fecha_apertura", newOffice.fecha_apertura));
+                        command.Parameters.Add(new SqlParameter("@fecha_inicio_gerencia", newOffice.fecha_inicio_gerencia));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();    
+                        response.actualizado = true;
+                        response.mensaje = $"Sucursal {verb} exitosamente";
+
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = $"Error al {infinitive} al sucursal";
+                }
+            }
+
+            
+            return response;
+        }
+
         
     }
 }
