@@ -19,27 +19,74 @@ namespace DetailTECService.Data
 
         }
 
+        //Proceso: Punto de entrada del proceso de crear un trabajador, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         public ActionResponse AddWorker(Worker newWorker)
         {
             ActionResponse response;
             string query = @"INSERT INTO TRABAJADOR
             VALUES (@cedula , @nacimiento , @nombre ,
             @apellido_1 , @apellido_2 , @rol , @pago , @ingreso , @password)";
-            response = InsertWorkerDB(query, newWorker);
+            response = WriteWorkerDB(query, newWorker);
             return response;
-            
-            
+        
         }
 
-        public ActionResponse InsertWorkerDB(string query, Worker newWorker)
+        //Proceso: Punto de entrada del proceso de modifica un trabajador, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse ModifyWorker(Worker newWorker)
+        {
+            ActionResponse response;
+            string query = @"UPDATE TRABAJADOR
+            SET FECHA_NACIMIENTO = @nacimiento ,
+            NOMBRE = @nombre ,
+            PRIMER_APELLIDO = @apellido_1 ,
+            SEGUNDO_APELLIDO = @apellido_2 ,
+            ID_ROL = @rol ,
+            ID_PAGO = @pago ,
+            FECHA_INGRESO = @ingreso ,
+            PASSWORD_TRABAJADOR = @password
+            WHERE CEDULA_TRABAJADOR = @cedula";
+            response = WriteWorkerDB(query, newWorker);
+            return response;
+        
+        }
+
+
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla TRABAJADOR
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse WriteWorkerDB(string query, Worker newWorker)
         {
             ActionResponse response = new ActionResponse();
-            
+            string verb = "";
+            string infinitive = "";
+
+                 
             
             try
             {
-                
+                if (query.Contains("INSERT"))
+                {
+                    verb = "creado";
+                    infinitive = "crear";
+                }
 
+                if (query.Contains("UPDATE"))
+                {
+                    verb = "actualizado";
+                    infinitive = "actualizar";
+                }
+                
                 if(newWorker.fecha_ingreso != null && newWorker.fecha_nacimiento != null)
                 {
                     newWorker.fecha_nacimiento = newWorker.fecha_nacimiento.Substring(0,10);
@@ -63,7 +110,8 @@ namespace DetailTECService.Data
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();    
                         response.actualizado = true;
-                        response.mensaje = "Trabajador creado exitosamente";
+                        response.mensaje = $"Trabajador {verb} exitosamente";
+
                     } 
                 }   
             }
@@ -72,14 +120,16 @@ namespace DetailTECService.Data
             {
                 Console.WriteLine("ERROR: " + e.Message +  "triggered by " + e.Source);
                 response.actualizado = false;
-                response.mensaje = "Error al crear al trabajador";
+                response.mensaje = $"Error al {infinitive} al trabajador";
+                
+                
             }
 
             catch(SqlException e)
             {
                 Console.WriteLine("ERROR: " + e.Message + "triggered by " + e.Source);
                 response.actualizado = false;
-                response.mensaje = "Error al crear al trabajador";
+                response.mensaje = $"Error al {infinitive} al trabajador";
             }
 
             return response;
