@@ -150,7 +150,7 @@ namespace DetailTECService.Data
                 if(newWorker.fecha_ingreso != null && newWorker.fecha_nacimiento != null)
                 {
                     newWorker.fecha_nacimiento = newWorker.fecha_nacimiento.Substring(0,10);
-                    newWorker.fecha_nacimiento = newWorker.fecha_ingreso.Substring(0,10);
+                    newWorker.fecha_ingreso = newWorker.fecha_ingreso.Substring(0,10);
                 }
                 
                 using (SqlConnection connection = new SqlConnection(_connectionString))
@@ -164,7 +164,7 @@ namespace DetailTECService.Data
                         command.Parameters.Add(new SqlParameter("@apellido_2", newWorker.segundo_apellido));
                         command.Parameters.Add(new SqlParameter("@rol", newWorker.id_rol));
                         command.Parameters.Add(new SqlParameter("@pago", newWorker.id_tipo_pago));
-                        command.Parameters.Add(new SqlParameter("@ingreso", newWorker.fecha_nacimiento));
+                        command.Parameters.Add(new SqlParameter("@ingreso", newWorker.fecha_ingreso));
                         command.Parameters.Add(new SqlParameter("@password", newWorker.password_trabajador));
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
