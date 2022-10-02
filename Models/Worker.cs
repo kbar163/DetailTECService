@@ -13,6 +13,8 @@ namespace DetailTECService.Models
         public int id_tipo_pago { get; set; }
         public string? fecha_ingreso { get; set; }
         public string? password_trabajador { get; set; }
+        public string? tipo_rol { get; set; }
+        public string? tipo_pago { get; set; }
     
         
         
