@@ -34,5 +34,37 @@ namespace TallerTECService.Controllers
 
         }
 
+        // POST api/manage/provider
+        [HttpPost]
+        public ActionResult<ActionResponse> AddProvider(Provider newProvider)
+        {
+
+            var response = _repository.AddProvider(newProvider);
+            return Ok(response);
+
+
+        }
+
+        // PATCH api/manage/provider
+        [HttpPatch]
+        public ActionResult<ActionResponse> ModifyOffice(Provider newProvider)
+        {
+
+            var response = _repository.ModifyProvider(newProvider);
+            return Ok(response); 
+
+        }
+
+        // DELETE api/manage/provider
+        [HttpDelete]
+        public ActionResult<ActionResponse> DeleteProvider(ProviderIdRequest deletionId)
+        {
+
+            var response = _repository.DeleteProvider(deletionId);
+            return Ok(response);
+
+        }
+
+
     }
 }

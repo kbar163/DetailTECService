@@ -7,5 +7,8 @@ namespace DetailTECService.Data
     public interface IProviderRepository
     {        
         MultivalueProvider GetAllProviders();
+        ActionResponse AddProvider (Provider newProvider);
+        ActionResponse ModifyProvider (Provider newProvider);
+        ActionResponse DeleteProvider (ProviderIdRequest deleteId);
     }
 }
