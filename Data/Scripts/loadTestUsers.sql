@@ -30,3 +30,9 @@ VALUES
 ('Montes de Oca', '25446675', '303450213', 'San José', 'Montes de Oca', 'San Pedro', '2019-01-01','2020-01-01'),
 ('San Carlos', '24438899', '222847727', 'Alajuela', 'San Carlos', 'Quesada', '2018-01-01','2021-01-01'),
 ('Alajuela', '25128341', '123121467', 'Alajuela', 'Alajuela', 'Alajuela', '2017-01-01','2022-01-01');
+
+INSERT INTO PROVEEDOR
+VALUES
+('2557897','LlantasTEC','2323232','Alajuela','San Carlos','Quesada','LlantasTEC18@gmail.com'),
+('3457897','LlantasUCR','2323232','Cartago','Turrialba','Oriental','LlantasUCR18@gmail.com'),
+('1237897','LlantasUNA','2323232','San Jose','Perez Zeledon','Occidental','LlantasUNA18@gmail.com');
