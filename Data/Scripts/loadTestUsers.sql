@@ -54,4 +54,4 @@ VALUES
 ('709837345','Alajuela','Palmares','Palmares'),
 ('609837345','Heredia','San Isidro','San Francisco'),
 ('209837345','Puntarenas','Coto Brus','San Vito'),
-('209837345','Puntarenas','Coto Brus','Sabalito'),
+('209837345','Puntarenas','Coto Brus','Sabalito');
