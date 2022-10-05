@@ -25,12 +25,21 @@ namespace DetailTECService.Controllers
         }
 
 
-        // GET api/manage/worker/all
+        // GET api/manage/customer/all
         [HttpGet("all")]
-        public ActionResult<MultivalueWorker> GetAllCustomers()
+        public ActionResult<MultivalueCustomer> GetAllCustomers()
         {
 
             var response = _repository.GetAllCustomers();
+            return Ok(response);
+
+        }
+
+        // POST api/manage/customer/
+        [HttpPost]
+        public ActionResult<MultivalueCustomer> AddCustomer(Customer customer)
+        {
+            var response = _repository.AddCustomer(customer);
             return Ok(response);
 
         }

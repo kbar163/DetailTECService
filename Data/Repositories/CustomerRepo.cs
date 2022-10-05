@@ -15,6 +15,11 @@ namespace DetailTECService.Data
             _connectionString = config.GetValue<string>("ConnectionStrings:DetailTECDB");
 
         }
+
+        public ActionResponse AddCustomer(Customer customer)
+        {
+            throw new NotImplementedException();
+        }
         
         //Proceso: Punto de entrada del proceso de obtener todos los clientes, hace uso de varias
         //funciones auxiliares que obtienen datos de la base de datos y le dan el formato necesario
@@ -206,5 +211,7 @@ namespace DetailTECService.Data
                 customer.telefonos = phoneList;
             }
         }
+
+        
     }
 }

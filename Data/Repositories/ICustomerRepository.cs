@@ -7,6 +7,8 @@ namespace DetailTECService.Data
     public interface ICustomerRepository
     {
         MultivalueCustomer GetAllCustomers();
+
+        ActionResponse AddCustomer(Customer customer);
         
     }
 }
