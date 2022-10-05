@@ -25,7 +25,7 @@ namespace DetailTECService.Controllers
         }
 
 
-        // GET api/manage/worker/all
+        // GET api/manage/customer/all
         [HttpGet("all")]
         public ActionResult<MultivalueWorker> GetAllCustomers()
         {
