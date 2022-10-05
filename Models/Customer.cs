@@ -13,7 +13,7 @@ namespace DetailTECService.Models
         public string? password_cliente { get; set; }
         public int puntos_acum { get; set; }
         public List<Address>? direcciones { get; set; }
-        public string? telefonos { get; set; }
+        public List<string>? telefonos {get; set; }
     
         
         

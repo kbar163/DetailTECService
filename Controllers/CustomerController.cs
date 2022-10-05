@@ -1,38 +1,38 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
-using DetailTECService.Data;
 using DetailTECService.Models;
+using DetailTECService.Data;
 
-namespace TallerTECService.Controllers
+namespace DetailTECService.Controllers
 {
-    //LoginController hereda la clase ControllerBase, utilizada para el manejo
+
+    //WorkerController hereda la clase ControllerBase, utilizada para el manejo
     //del endpoints.
     //ApiController identifica a la clase como un controlador en el framework.
-    //LoginController se encarga de manejar el endpoint que permite a los usuarios hacer login.
+    //WorkerController Se encarga de manejar operaciones CRUD para los trabajadores registrados.
     //Route especifica la ruta para este controlador. En este caso local:
-    //http://localhost:7163/api/login
-
-    [Route("api/login")]
+    //http://localhost:7163/api/manage/customer
+    [Route("api/manage/customer")]
     [ApiController]
     [EnableCors("Policy")]
     public class CustomerController : ControllerBase
     {
-        private readonly ILoginRepository _repository;
+        private readonly ICustomerRepository _repository;
 
-        public CustomerController(ILoginRepository repository)
+        public CustomerController(ICustomerRepository repository)
         {
             _repository = repository;
         }
 
+
+        // GET api/manage/worker/all
         [HttpGet("all")]
-        ActionResult<MultivalueCustomer> GetAllCustomers()
+        public ActionResult<MultivalueWorker> GetAllCustomers()
         {
-            throw new NotImplementedException();
+
+            var response = _repository.GetAllCustomers();
+            return Ok(response);
+
         }
-
-
-
-
     }
-
 }
