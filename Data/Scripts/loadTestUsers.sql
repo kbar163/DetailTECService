@@ -36,3 +36,9 @@ VALUES
 ('2557897','LlantasTEC','2323232','Alajuela','San Carlos','Quesada','LlantasTEC18@gmail.com'),
 ('3457897','LlantasUCR','2323232','Cartago','Turrialba','Oriental','LlantasUCR18@gmail.com'),
 ('1237897','LlantasUNA','2323232','San Jose','Perez Zeledon','Occidental','LlantasUNA18@gmail.com');
+
+INSERT INTO INSUMO
+VALUES
+('Lubricante','5000','TEC','2557897'),
+('Jabon','12000','UNA','1237897'),
+('Esponja','2300','UCR','3457897');
