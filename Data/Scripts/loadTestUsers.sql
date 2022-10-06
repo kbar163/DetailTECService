@@ -41,4 +41,4 @@ INSERT INTO INSUMO
 VALUES
 ('Lubricante','5000','TEC','2557897'),
 ('Jabon','12000','UNA','1237897'),
-('Esponja','2300','UNAM','121213432');
+('Esponja','2300','UCR','3457897');
