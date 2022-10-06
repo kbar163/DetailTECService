@@ -37,8 +37,28 @@ VALUES
 ('3457897','LlantasUCR','2323232','Cartago','Turrialba','Oriental','LlantasUCR18@gmail.com'),
 ('1237897','LlantasUNA','2323232','San Jose','Perez Zeledon','Occidental','LlantasUNA18@gmail.com');
 
+INSERT INTO CLIENTE_TELEFONO
+VALUES
+('409837345','89881111'),
+('409837345','89882222'),
+('409837345','89883333'),
+('709837345','88871111'),
+('609837345','87861111'),
+('609837345','87862222'),
+('209837345','86851111');
+
+INSERT INTO CLIENTE_DIRECCION
+VALUES
+('409837345','San Jose','Montes De Oca','San Pedro'),
+('409837345','Cartago','Turrialba','Turrialba'),
+('709837345','Alajuela','Palmares','Palmares'),
+('609837345','Heredia','San Isidro','San Francisco'),
+('209837345','Puntarenas','Coto Brus','San Vito'),
+('209837345','Puntarenas','Coto Brus','Sabalito');
+
 INSERT INTO INSUMO
 VALUES
 ('Lubricante','5000','TEC','2557897'),
 ('Jabon','12000','UNA','1237897'),
 ('Esponja','2300','UCR','3457897');
+

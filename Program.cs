@@ -2,8 +2,8 @@ using DetailTECService.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 
+// Add services to the container.
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -12,8 +12,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ILoginRepository, LoginRepo>();
 builder.Services.AddScoped<IWorkerRepository, WorkerRepo>();
 builder.Services.AddScoped<IOfficeRepository, OfficeRepo>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepo>();
 builder.Services.AddScoped<IProviderRepository, ProviderRepo>();
 builder.Services.AddScoped<IProductRepository, ProductRepo>();
+
 
 
 

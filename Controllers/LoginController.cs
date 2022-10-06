@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DetailTECService.Data;
 using DetailTECService.Models;
 
-namespace TallerTECService.Controllers
+namespace DetailTECService.Controllers
 {
     //LoginController hereda la clase ControllerBase, utilizada para el manejo
     //del endpoints.

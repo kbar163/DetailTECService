@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DetailTECService.Models;
 using DetailTECService.Data;
 
-namespace TallerTECService.Controllers
+namespace DetailTECService.Controllers
 {
 
     //OfficeController hereda la clase ControllerBase, utilizada para el manejo
