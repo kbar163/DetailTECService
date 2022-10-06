@@ -14,6 +14,8 @@ builder.Services.AddScoped<IWorkerRepository, WorkerRepo>();
 builder.Services.AddScoped<IOfficeRepository, OfficeRepo>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepo>();
 builder.Services.AddScoped<IProviderRepository, ProviderRepo>();
+builder.Services.AddScoped<IProductRepository, ProductRepo>();
+
 
 
 

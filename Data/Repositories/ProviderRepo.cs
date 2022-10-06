@@ -3,7 +3,7 @@ using DetailTECService.Models;
 using Microsoft.Data.SqlClient;
 
 //Implementacion de la logica para cada una de los endpoints expuesos en OfficeController,
-//esta clase extiende la interfaz IOfficeRepository, e implementa los metodos relacionados
+//esta clase extiende la interfaz IProviderRepository, e implementa los metodos relacionados
 //a la manipulacion de datos necesaria para cumplir con los requerimientos funcionales
 //de la aplicacion.
 namespace DetailTECService.Data

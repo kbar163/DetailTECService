@@ -55,3 +55,10 @@ VALUES
 ('609837345','Heredia','San Isidro','San Francisco'),
 ('209837345','Puntarenas','Coto Brus','San Vito'),
 ('209837345','Puntarenas','Coto Brus','Sabalito');
+
+INSERT INTO INSUMO
+VALUES
+('Lubricante','5000','TEC','2557897'),
+('Jabon','12000','UNA','1237897'),
+('Esponja','2300','UCR','3457897');
+
