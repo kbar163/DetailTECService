@@ -160,7 +160,7 @@ namespace DetailTECService.Data
         //Proceso: Se crea un query para eliminar de la DB a la sucursal cuyo NOMBRE_SUCURSAL haga match con
         //la propiedad nombre_sucursal de deleteId.
         //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
-        //Intenta ejecutar DELETE sobre la base de datos en la tabla TRABAJADOR
+        //Intenta ejecutar DELETE sobre la base de datos en la tabla SUCURSAL
         //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
         //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
         //la operacion.

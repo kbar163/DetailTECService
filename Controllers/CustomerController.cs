@@ -9,7 +9,7 @@ namespace DetailTECService.Controllers
     //WorkerController hereda la clase ControllerBase, utilizada para el manejo
     //del endpoints.
     //ApiController identifica a la clase como un controlador en el framework.
-    //WorkerController Se encarga de manejar operaciones CRUD para los trabajadores registrados.
+    //WorkerController Se encarga de manejar operaciones CRUD para los clientes registrados.
     //Route especifica la ruta para este controlador. En este caso local:
     //http://localhost:7163/api/manage/customer
     [Route("api/manage/customer")]
@@ -40,6 +40,24 @@ namespace DetailTECService.Controllers
         public ActionResult<MultivalueCustomer> AddCustomer(Customer customer)
         {
             var response = _repository.AddCustomer(customer);
+            return Ok(response);
+
+        }
+
+        // POST api/manage/customer/
+        [HttpPatch]
+        public ActionResult<MultivalueCustomer> ModifyCustomer(Customer customer)
+        {
+            var response = _repository.ModifyCustomer(customer);
+            return Ok(response);
+
+        }
+
+        // DELETE api/manage/customer/
+        [HttpDelete]
+        public ActionResult<ActionResponse> DeleteCustomer(CustomerIdRequest deleteId)
+        {
+            var response = _repository.DeleteCustomer(deleteId);
             return Ok(response);
 
         }

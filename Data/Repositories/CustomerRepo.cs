@@ -5,6 +5,10 @@ using MlkPwgen;
 
 namespace DetailTECService.Data
 {
+    //Implementacion de la logica para cada una de los endpoints expuesos en CustomerController,
+    //esta clase extiende la interfaz ICustomerRepository, e implementa los metodos relacionados
+    //a la manipulacion de datos necesaria para cumplir con los requerimientos funcionales
+    //de la aplicacion.
     public class CustomerRepo : ICustomerRepository
     {
 
@@ -33,6 +37,91 @@ namespace DetailTECService.Data
             return response;
         }
 
+        //Proceso: Punto de entrada del proceso de editar un cliente, hace uso de una funcion
+        //auxiliar que actualiza informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse ModifyCustomer(Customer newCustomer)
+        {
+            ActionResponse response;
+            string query = @"UPDATE CLIENTE
+            SET CEDULA_CLIENTE = @cedula ,
+            NOMBRE = @nombre ,
+            PRIMER_APELLIDO = @apellido_1 ,
+            SEGUNDO_APELLIDO = @apellido_2 ,
+            CORREO_CLIENTE = @correo ,
+            USUARIO = @usuario ,
+            PASSWORD_CLIENTE = @password,
+            PUNTOS_ACUM = @puntos
+            WHERE CEDULA_CLIENTE = @cedula";
+            response = WriteCustomerDB(query, newCustomer);
+            return response;
+        }
+
+        //Proceso: Punto de entrada del proceso de borrar un cliente, hace uso de una funcion
+        //auxiliar que elimina informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse DeleteCustomer (CustomerIdRequest customerId)
+        {
+            var response = new ActionResponse();
+            
+            var customerQuery = @"DELETE FROM CLIENTE
+            WHERE CEDULA_CLIENTE = @cedula";
+            var addressQuery = @"DELETE FROM CLIENTE_DIRECCION
+            WHERE CEDULA_CLIENTE = @cedula";
+            var phoneQuery = @"DELETE FROM CLIENTE_TELEFONO
+            WHERE CEDULA_CLIENTE = @cedula";
+
+            var deletePhone = DeleteDatabyId(phoneQuery, customerId.cedula_cliente);
+            var deleteAddress = DeleteDatabyId(addressQuery, customerId.cedula_cliente);
+            var deleteCustomer = DeleteDatabyId(customerQuery, customerId.cedula_cliente);
+
+            if( deletePhone && deleteAddress && deleteCustomer)
+            {
+                response.actualizado = true;
+                response.mensaje = "Cliente eliminado exitosamente";
+            }
+            
+            return response;
+
+    
+        }
+
+        private bool DeleteDatabyId(string query, string deleteId)
+        {
+            var isSuccessful = false;
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@cedula", deleteId));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        isSuccessful = true;   
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    isSuccessful = false;
+                }
+            }
+
+            return isSuccessful;
+        }
+
+        
 
         //Proceso: Punto de entrada del proceso de obtener todos los clientes, hace uso de varias
         //funciones auxiliares que obtienen datos de la base de datos y le dan el formato necesario
@@ -276,45 +365,12 @@ namespace DetailTECService.Data
             catch (Exception ex)
             {
                 if (ex is ArgumentException ||
-                    ex is InvalidOperationException)
+                    ex is InvalidOperationException ||
+                    ex is SqlException)
                 {
                     Console.WriteLine("ERROR: " + ex.Message + "triggered by " + ex.Source);
                     response.actualizado = false;
                     response.mensaje = $"Error al {infinitive} al cliente";
-                }
-
-                if (ex is SqlException)
-                {
-                    if (ex.Message.
-                    Contains("Cannot insert duplicate key in object 'dbo.CLIENTE_DIRECCION'"))
-                    {
-                        try
-                        {
-                            SetPhoneNumber(newCustomer);
-                            response.actualizado = true;
-                            response.mensaje = $"Cliente {verb} exitosamente. Los datos duplicados fueron ignorados";
-                        }
-                        catch (SqlException duplicate)
-                        {
-                            if (duplicate.Message.Contains("Cannot insert duplicate key in object 'dbo.CLIENTE_TELEFONO'"))
-                            {
-                                response.actualizado = true;
-                                response.mensaje = $"Cliente {verb} exitosamente. Los datos duplicados fueron ignorados";
-                            }
-                        }
-                    }
-
-                    else if (ex.Message.Contains("Cannot insert duplicate key in object 'dbo.CLIENTE_TELEFONO'"))
-                    {
-                        response.actualizado = true;
-                        response.mensaje = $"Cliente {verb} exitosamente. Los datos duplicados fueron ignorados";
-                    }
-                    else
-                    {
-                        Console.WriteLine("ERROR: " + ex.Message + "triggered by " + ex.Source);
-                        response.actualizado = false;
-                        response.mensaje = $"Error al {infinitive} al cliente";
-                    }
                 }
             }
             return response;
@@ -329,9 +385,10 @@ namespace DetailTECService.Data
         //la operacion.
         private void SetAddress(Customer customer, string infinitive)
         {
+            var uniqueAddresses = customer.direcciones.Distinct(new AddressComparer()).ToList();
             if (infinitive == "crear")
             {
-                foreach (Address address in customer.direcciones)
+                foreach (Address address in uniqueAddresses)
                 {
                     var query = @"INSERT INTO CLIENTE_DIRECCION
                     VALUES (@cedula_direccion , @provincia ,
@@ -355,31 +412,85 @@ namespace DetailTECService.Data
 
             if (infinitive == "actualizar")
             {
-                //PARA ACTUALIZAR
-            }
-
-        }
-
-        private void SetPhoneNumber(Customer customer)
-        {
-            foreach (string phoneNumber in customer.telefonos)
-            {
-                var query = @"INSERT INTO CLIENTE_TELEFONO
-                VALUES (@cedula_telefono , @telefono)";
-
-                using (SqlConnection connection = new SqlConnection(_connectionString))
+                var addressQuery = @"DELETE FROM CLIENTE_DIRECCION
+                WHERE CEDULA_CLIENTE = @cedula";
+                DeleteDatabyId(addressQuery,customer.cedula_cliente);
+            
+                foreach (Address address in uniqueAddresses)
                 {
-                    using (SqlCommand command = new SqlCommand(query, connection))
+                    var query = @"INSERT INTO CLIENTE_DIRECCION
+                    VALUES (@cedula_direccion , @provincia ,
+                    @canton , @distrito)";
+
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
                     {
-                        command.Parameters.Add(new SqlParameter("@cedula_telefono", customer.cedula_cliente));
-                        command.Parameters.Add(new SqlParameter("@telefono", phoneNumber));
-                        connection.Open();
-                        command.ExecuteNonQuery();
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+
+                            command.Parameters.Add(new SqlParameter("@cedula_direccion", customer.cedula_cliente));
+                            command.Parameters.Add(new SqlParameter("@provincia", address.provincia));
+                            command.Parameters.Add(new SqlParameter("@canton", address.canton));
+                            command.Parameters.Add(new SqlParameter("@distrito", address.distrito));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
                     }
                 }
+            }
+        }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla CLIENTE
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        private void SetPhoneNumber(Customer customer, string infinitive)
+        {
+            var uniquePhones = customer.telefonos.Distinct().ToList();
+            if (infinitive == "crear")
+            {
+                foreach (string phoneNumber in uniquePhones)
+                {
+                    var query = @"INSERT INTO CLIENTE_TELEFONO
+                    VALUES (@cedula_telefono , @telefono)";
+
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add(new SqlParameter("@cedula_telefono", customer.cedula_cliente));
+                            command.Parameters.Add(new SqlParameter("@telefono", phoneNumber));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
             }
 
+            if (infinitive == "actualizar")
+            {
+                var phoneQuery = @"DELETE FROM CLIENTE_TELEFONO
+                WHERE CEDULA_CLIENTE = @cedula";
+                DeleteDatabyId(phoneQuery, customer.cedula_cliente);
+
+                foreach (string phoneNumber in uniquePhones)
+                {
+                    var query = @"INSERT INTO CLIENTE_TELEFONO
+                    VALUES (@cedula_telefono , @telefono)";
+
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add(new SqlParameter("@cedula_telefono", customer.cedula_cliente));
+                            command.Parameters.Add(new SqlParameter("@telefono", phoneNumber));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
         }
     }
 }
