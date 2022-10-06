@@ -103,8 +103,6 @@ namespace DetailTECService.Data
             }
             return dbTable;
         }
-
-
         //Entradas: 
         //DataTable dbTable: DataTable que potencialmente contiene informacion obtenida de la base de datos.
         //Proceso: Se revisa si dbTable tiene contenido, de ser asi, se cambia la propiedad boolean de la respuesta
@@ -142,7 +140,7 @@ namespace DetailTECService.Data
             }
             return response;
         }
-        
+
         //Proceso: 
         //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
         //Intenta ejecutar el query parametrizado con la cedula del proveedor del que se
@@ -164,5 +162,123 @@ namespace DetailTECService.Data
             }
             product.nombre_proveedor = (string)namebyid.Rows[0]["NOMBRE"];
         }
+        public ActionResponse WriteProductDB(string query, Product newProduct)
+        {
+            ActionResponse response = new ActionResponse();
+            string verb = "";
+            string infinitive = "";
+
+            try
+            {
+                if (query.Contains("INSERT"))
+                {
+                    verb = "creado";
+                    infinitive = "crear";
+                }
+
+                if (query.Contains("UPDATE"))
+                {
+                    verb = "actualizado";
+                    infinitive = "actualizar";
+                }
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nombre_producto", newProduct.nombre_insumo));
+                        command.Parameters.Add(new SqlParameter("@costo", newProduct.costo));
+                        command.Parameters.Add(new SqlParameter("@marca", newProduct.marca));
+                        command.Parameters.Add(new SqlParameter("@cedula_proveedor", newProduct.cedula_juridica_proveedor));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();    
+                        response.actualizado = true;
+                        response.mensaje = $"Proveedor {verb} exitosamente";   
+                    }
+                }
+            }
+            
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = $"Error al {infinitive} el producto";
+                }
+            }
+            return response;
+        }
+
+        public ActionResponse AddProduct(Product newProduct)
+        {
+            ActionResponse response;
+            string query = @"INSERT INTO INSUMO
+            VALUES (@nombre_producto , @costo , @marca ,
+            @cedula_proveedor)";
+            response = WriteProductDB(query, newProduct);
+            return response;
+
+        }
+        //Proceso: Punto de entrada del proceso de modificar un producto, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse ModifyProduct(Product newProduct)
+        {
+            ActionResponse response;
+            string query = @"UPDATE INSUMO
+            SET COSTO = @costo,
+            MARCA = @marca,
+            CEDULA_JURIDICA_PROVEEDOR= @cedula_proveedor
+            WHERE NOMBRE_INSUMO = @nombre_producto";
+            response = WriteProductDB(query, newProduct);
+            return response;
+        }
+        //Entrada: ProductIdRequest deleteId, tiene una propiedad string que representa el nombre de un produtcto
+        //Proceso: Se crea un query para eliminar de la DB el producto cuyo NOMBRE_INSUMO haga match con
+        //la propiedad nombre_insumo de deleteId.
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar DELETE sobre la base de datos en la tabla INSUMO
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse DeleteProduct(ProductIdRequest deleteId)
+        {
+            ActionResponse response = new ActionResponse();
+            string query = @"DELETE FROM INSUMO
+            WHERE NOMBRE_INSUMO = @nombre_producto";
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nombre_producto", deleteId.nombre_insumo));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        response.actualizado = true;
+                        response.mensaje = "Producto eliminado exitosamente";
+
+                    } 
+                }   
+            }
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = "Error al eliminar Producto";
+                }
+            }
+            return response;
+        }
     }
 }
+      

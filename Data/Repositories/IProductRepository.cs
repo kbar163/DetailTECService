@@ -7,5 +7,8 @@ namespace DetailTECService.Data
     public interface IProductRepository
     {        
         MultivalueProduct GetAllProducts();
+        ActionResponse AddProduct (Product newProduct);
+        ActionResponse ModifyProduct (Product newProduct);
+        ActionResponse DeleteProduct (ProductIdRequest deleteId);
     }
 }
