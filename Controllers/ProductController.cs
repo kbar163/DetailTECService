@@ -33,6 +33,37 @@ namespace TallerTECService.Controllers
             return Ok(response);
 
         }
+        
+        // POST api/manage/product
+        [HttpPost]
+        public ActionResult<ActionResponse> AddProduct(Product newProduct)
+        {
+
+            var response = _repository.AddProduct(newProduct);
+            return Ok(response);
+
+
+        }
+
+        // PATCH api/manage/product
+        [HttpPatch]
+        public ActionResult<ActionResponse> ModifyProduct(Product newProduct)
+        {
+
+            var response = _repository.ModifyProduct(newProduct);
+            return Ok(response); 
+
+        }
+
+        // DELETE api/manage/product
+        [HttpDelete]
+        public ActionResult<ActionResponse> DeleteProduct(ProductIdRequest deletionId)
+        {
+
+            var response = _repository.DeleteProduct(deletionId);
+            return Ok(response);
+
+        }
 
     }
 }

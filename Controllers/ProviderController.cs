@@ -47,7 +47,7 @@ namespace TallerTECService.Controllers
 
         // PATCH api/manage/provider
         [HttpPatch]
-        public ActionResult<ActionResponse> ModifyOffice(Provider newProvider)
+        public ActionResult<ActionResponse> ModifyProvider(Provider newProvider)
         {
 
             var response = _repository.ModifyProvider(newProvider);
@@ -64,7 +64,6 @@ namespace TallerTECService.Controllers
             return Ok(response);
 
         }
-
 
     }
 }
