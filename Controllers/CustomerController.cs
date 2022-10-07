@@ -6,10 +6,10 @@ using DetailTECService.Data;
 namespace DetailTECService.Controllers
 {
 
-    //WorkerController hereda la clase ControllerBase, utilizada para el manejo
+    //CustomerController hereda la clase ControllerBase, utilizada para el manejo
     //del endpoints.
     //ApiController identifica a la clase como un controlador en el framework.
-    //WorkerController Se encarga de manejar operaciones CRUD para los clientes registrados.
+    //CustomerController Se encarga de manejar operaciones CRUD para los clientes registrados.
     //Route especifica la ruta para este controlador. En este caso local:
     //http://localhost:7163/api/manage/customer
     [Route("api/manage/customer")]
