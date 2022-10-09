@@ -1,6 +1,7 @@
 using System.Data;
 using DetailTECService.Models;
 using Microsoft.Data.SqlClient;
+using DetailTECService.Coms;
 using MlkPwgen;
 
 namespace DetailTECService.Data
@@ -34,6 +35,7 @@ namespace DetailTECService.Data
             VALUES (@cedula , @nombre ,
             @apellido_1 , @apellido_2 , @correo , @usuario , @password , @puntos)";
             response = WriteCustomerDB(query, newCustomer);
+            if(response.actualizado) EmailSender.SendCreationEmail(newCustomer);
             return response;
         }
 
