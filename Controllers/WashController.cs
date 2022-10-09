@@ -45,7 +45,17 @@ namespace DetailTECService.Controllers
 
         }
 
-        // POST api/manage/wash/
+        // PATCH api/manage/wash/
+        [HttpPatch]
+        public ActionResult<MultivalueWash> ModifyWashType(WashType newWash)
+        {
+
+            var response = _repository.ModifyWashType(newWash);
+            return Ok(response);
+
+        }
+
+        // DELETE api/manage/wash/
         [HttpDelete]
         public ActionResult<MultivalueWash> DeleteWashType(WashIdRequest deleteName)
         {

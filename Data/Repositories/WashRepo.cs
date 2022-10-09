@@ -37,6 +37,12 @@ namespace DetailTECService.Data
             return response;
         }
 
+
+        //Proceso: Punto de entrada del proceso de crear un tipo de lavado, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         public ActionResponse AddWashType(WashType newWash)
         {
             ActionResponse response;
@@ -47,6 +53,33 @@ namespace DetailTECService.Data
             return response;
         }
 
+
+        //Proceso: Punto de entrada del proceso de editar un tipo de lavado, hace uso de una funcion
+        //auxiliar que actualiza informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse ModifyWashType(WashType newWash)
+        {
+            ActionResponse response;
+            string query = @"UPDATE LAVADO
+            SET NOMBRE_LAVADO = @nombre ,
+            COSTO_PERSONAL = @costo ,
+            PRECIO = @precio ,
+            DURACION = @duracion ,
+            PUNTOS_OTORGADOS = @puntos_otorgados ,
+            COSTO_PUNTOS = @costo_puntos
+            WHERE NOMBRE_LAVADO = @nombre";
+            response = WriteWashDB(query, newWash);
+            return response;
+        }
+
+
+        //Proceso: Punto de entrada del proceso de borrar un tipo de lavado, hace uso de una funcion
+        //auxiliar que elimina informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         public ActionResponse DeleteWashType(WashIdRequest deleteName)
         {
             var response = new ActionResponse();
@@ -65,12 +98,17 @@ namespace DetailTECService.Data
             if( deleteRoles && deleteProducts && deleteRoles)
             {
                 response.actualizado = true;
-                response.mensaje = "Cliente eliminado exitosamente";
+                response.mensaje = "Tipo de lavado eliminado exitosamente";
             }
             
             return response;
         }
 
+
+        //Entrada: Un string query que contiene un SQL Query y un string nombre_lavado que contiene
+        //un primary key para una tabla en la base de datos.
+        //Proceso: Se conecta a la base de datos y ejecuta el query de eliminacion segun fue especificado.
+        //Salida: booleano que indica si la operacion fue exitosa o no.
         private bool DeleteDataById(string query, string nombre_lavado)
         {
             var isSuccessful = false;
@@ -158,6 +196,12 @@ namespace DetailTECService.Data
             return response;
         }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla LAVADO_ROL
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         private void SetRoles(WashType newWash, string infinitive)
         {
             var uniqueRoles = newWash.roles.Distinct(new RoleComparer()).ToList();
@@ -181,8 +225,39 @@ namespace DetailTECService.Data
                     }
                 }
             }
+
+            if (infinitive == "actualizar")
+            {
+                var roleQuery = @"DELETE FROM LAVADO_ROL
+                WHERE NOMBRE_LAVADO = @nombre";
+                DeleteDataById(roleQuery,newWash.nombre_lavado);
+            
+                foreach (Role role in uniqueRoles)
+                {
+                    var query = @"INSERT INTO LAVADO_ROL
+                    VALUES (@nombre , @idRol)";
+
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+
+                            command.Parameters.Add(new SqlParameter("@nombre", newWash.nombre_lavado));
+                            command.Parameters.Add(new SqlParameter("@idRol", role.id_rol));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
         }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla LAVADO_INSUMO
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         private void SetProducts(WashType newWash, string infinitive)
         {
             var uniqueProducts = newWash.insumos.Distinct().ToList();
@@ -206,29 +281,30 @@ namespace DetailTECService.Data
                 }
             }
 
-            // if (infinitive == "actualizar")
-            // {
-            //     var phoneQuery = @"DELETE FROM CLIENTE_TELEFONO
-            //     WHERE CEDULA_CLIENTE = @cedula";
-            //     DeleteDatabyId(phoneQuery, customer.cedula_cliente);
+            if (infinitive == "actualizar")
+            {
+                var productQuery = @"DELETE FROM LAVADO_INSUMO
+                WHERE NOMBRE_LAVADO = @nombre";
+                DeleteDataById(productQuery, newWash.nombre_lavado);
 
-            //     foreach (string phoneNumber in uniquePhones)
-            //     {
-            //         var query = @"INSERT INTO CLIENTE_TELEFONO
-            //         VALUES (@cedula_telefono , @telefono)";
+                foreach (string product in uniqueProducts)
+                {
+                    var query = @"INSERT INTO LAVADO_INSUMO
+                    VALUES (@nombre_lavado , @nombre_producto)";
 
-            //         using (SqlConnection connection = new SqlConnection(_connectionString))
-            //         {
-            //             using (SqlCommand command = new SqlCommand(query, connection))
-            //             {
-            //                 command.Parameters.Add(new SqlParameter("@cedula_telefono", customer.cedula_cliente));
-            //                 command.Parameters.Add(new SqlParameter("@telefono", phoneNumber));
-            //                 connection.Open();
-            //                 command.ExecuteNonQuery();
-            //             }
-            //         }
-            //     }
-            // }
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add(new SqlParameter("@nombre_lavado", newWash.nombre_lavado));
+                            command.Parameters.Add(new SqlParameter("@nombre_producto", product));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+
         }
 
         //Proceso: 
