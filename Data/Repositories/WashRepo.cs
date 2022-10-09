@@ -37,6 +37,145 @@ namespace DetailTECService.Data
             return response;
         }
 
+        public ActionResponse AddWashType(WashType newWash)
+        {
+            ActionResponse response;
+            string query = @"INSERT INTO LAVADO
+            VALUES (@nombre , @costo ,
+            @precio , @duracion , @puntos_otorgados , @costo_puntos)";
+            response = WriteWashDB(query, newWash);
+            return response;
+        }
+
+        private ActionResponse WriteWashDB(string query, WashType newWash)
+        {
+            ActionResponse response = new ActionResponse();
+            string verb = "";
+            string infinitive = "";
+
+            try
+            {
+                if (query.Contains("INSERT"))
+                {
+                    verb = "creado";
+                    infinitive = "crear";
+                }
+
+                if (query.Contains("UPDATE"))
+                {
+                    verb = "actualizado";
+                    infinitive = "actualizar";
+                }
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nombre", newWash.nombre_lavado));
+                        command.Parameters.Add(new SqlParameter("@costo", newWash.costo_personal));
+                        command.Parameters.Add(new SqlParameter("@precio", newWash.precio));
+                        command.Parameters.Add(new SqlParameter("@duracion", newWash.duracion));
+                        command.Parameters.Add(new SqlParameter("@puntos_otorgados", newWash.puntos_otorgados));
+                        command.Parameters.Add(new SqlParameter("@costo_puntos", newWash.costo_puntos));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        response.actualizado = true;
+                        response.mensaje = $"Lavado {verb} exitosamente";
+                    }
+                }
+                
+                SetProducts(newWash, infinitive);
+                SetRoles(newWash, infinitive);
+            }
+
+            catch (Exception ex)
+            {
+                if (ex is ArgumentException ||
+                    ex is InvalidOperationException ||
+                    ex is SqlException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message + "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = $"Error al {infinitive} el lavado";
+                }
+            }
+            return response;
+        }
+
+        private void SetRoles(WashType newWash, string infinitive)
+        {
+            var uniqueRoles = newWash.roles.Distinct(new RoleComparer()).ToList();
+            if (infinitive == "crear")
+            {
+                foreach (Role role in uniqueRoles)
+                {
+                    var query = @"INSERT INTO LAVADO_ROL
+                    VALUES (@nombre_lavado , @id_rol)";
+
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+
+                            command.Parameters.Add(new SqlParameter("@nombre_lavado", newWash.nombre_lavado));
+                            command.Parameters.Add(new SqlParameter("@id_rol", role.id_rol));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void SetProducts(WashType newWash, string infinitive)
+        {
+            var uniqueProducts = newWash.insumos.Distinct().ToList();
+            if (infinitive == "crear")
+            {
+                foreach (string product in uniqueProducts)
+                {
+                    var query = @"INSERT INTO LAVADO_INSUMO 
+                    VALUES (@nombre_lavado , @nombre_insumo)";
+
+                    using (SqlConnection connection = new SqlConnection(_connectionString))
+                    {
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.Add(new SqlParameter("@nombre_lavado", newWash.nombre_lavado));
+                            command.Parameters.Add(new SqlParameter("@nombre_insumo", product));
+                            connection.Open();
+                            command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+
+            // if (infinitive == "actualizar")
+            // {
+            //     var phoneQuery = @"DELETE FROM CLIENTE_TELEFONO
+            //     WHERE CEDULA_CLIENTE = @cedula";
+            //     DeleteDatabyId(phoneQuery, customer.cedula_cliente);
+
+            //     foreach (string phoneNumber in uniquePhones)
+            //     {
+            //         var query = @"INSERT INTO CLIENTE_TELEFONO
+            //         VALUES (@cedula_telefono , @telefono)";
+
+            //         using (SqlConnection connection = new SqlConnection(_connectionString))
+            //         {
+            //             using (SqlCommand command = new SqlCommand(query, connection))
+            //             {
+            //                 command.Parameters.Add(new SqlParameter("@cedula_telefono", customer.cedula_cliente));
+            //                 command.Parameters.Add(new SqlParameter("@telefono", phoneNumber));
+            //                 connection.Open();
+            //                 command.ExecuteNonQuery();
+            //             }
+            //         }
+            //     }
+            // }
+        }
+
         //Proceso: 
         //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
         //Intenta ejecutar el query sobre la base de datos y escribir el resultado al DataTable data
@@ -226,5 +365,7 @@ namespace DetailTECService.Data
             }
             wash.roles = roleList;
         }
+
+        
     }
 }

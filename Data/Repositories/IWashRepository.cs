@@ -7,5 +7,6 @@ namespace DetailTECService.Data
     public interface IWashRepository
     {
         MultivalueWash GetAllWashTypes();
+        ActionResponse AddWashType(WashType newWash);
     }
 }
