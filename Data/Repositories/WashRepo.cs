@@ -47,6 +47,61 @@ namespace DetailTECService.Data
             return response;
         }
 
+        public ActionResponse DeleteWashType(WashIdRequest deleteName)
+        {
+            var response = new ActionResponse();
+            
+            var washQuery = @"DELETE FROM LAVADO
+            WHERE NOMBRE_LAVADO = @nombre";
+            var productQuery = @"DELETE FROM LAVADO_INSUMO
+            WHERE NOMBRE_LAVADO = @nombre";
+            var roleQuery = @"DELETE FROM LAVADO_ROL
+            WHERE NOMBRE_LAVADO = @nombre";
+
+            var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
+            var deleteProducts = DeleteDataById(productQuery, deleteName.nombre_lavado);
+            var deleteWashType = DeleteDataById(washQuery, deleteName.nombre_lavado);
+
+            if( deleteRoles && deleteProducts && deleteRoles)
+            {
+                response.actualizado = true;
+                response.mensaje = "Cliente eliminado exitosamente";
+            }
+            
+            return response;
+        }
+
+        private bool DeleteDataById(string query, string nombre_lavado)
+        {
+            var isSuccessful = false;
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@nombre", nombre_lavado));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        isSuccessful = true;   
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    isSuccessful = false;
+                }
+            }
+
+            return isSuccessful;
+        }
+
         private ActionResponse WriteWashDB(string query, WashType newWash)
         {
             ActionResponse response = new ActionResponse();

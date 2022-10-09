@@ -8,5 +8,6 @@ namespace DetailTECService.Data
     {
         MultivalueWash GetAllWashTypes();
         ActionResponse AddWashType(WashType newWash);
+        ActionResponse DeleteWashType(WashIdRequest deleteName);
     }
 }

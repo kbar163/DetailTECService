@@ -44,5 +44,15 @@ namespace DetailTECService.Controllers
             return Ok(response);
 
         }
+
+        // POST api/manage/wash/
+        [HttpDelete]
+        public ActionResult<MultivalueWash> DeleteWashType(WashIdRequest deleteName)
+        {
+
+            var response = _repository.DeleteWashType(deleteName);
+            return Ok(response);
+
+        }
     }
 }
