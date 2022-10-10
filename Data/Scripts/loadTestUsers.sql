@@ -62,3 +62,22 @@ VALUES
 ('Jabon','12000','UNA','1237897'),
 ('Esponja','2300','UCR','3457897');
 
+INSERT INTO LAVADO
+VALUES
+('Lavado simple',2000,5000,45,5,20),
+('Lavado avanzado',3000,7000,60,10,30);
+
+INSERT INTO LAVADO_INSUMO
+VALUES
+('Lavado simple', 'Jabon'),
+('Lavado avanzado','Jabon'),
+('Lavado avanzado','Esponja');
+
+INSERT INTO LAVADO_ROL
+VALUES
+('Lavado simple', 1),
+('Lavado avanzado',1),
+('Lavado avanzado',2);
+
+
+
