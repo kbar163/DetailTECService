@@ -2,7 +2,7 @@ namespace DetailTECService.Models
 {
     public class WashType
     {
-        public string nombre_lavado { get; set; }
+        public string? nombre_lavado { get; set; }
         public int costo_personal { get; set; }
         public int precio { get; set; }
         public int duracion { get; set; }
