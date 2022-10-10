@@ -34,5 +34,35 @@ namespace DetailTECService.Controllers
             return Ok(response);
 
         }
+
+        // POST api/manage/wash/
+        [HttpPost]
+        public ActionResult<MultivalueWash> AddWashType(WashType newWash)
+        {
+
+            var response = _repository.AddWashType(newWash);
+            return Ok(response);
+
+        }
+
+        // PATCH api/manage/wash/
+        [HttpPatch]
+        public ActionResult<MultivalueWash> ModifyWashType(WashType newWash)
+        {
+
+            var response = _repository.ModifyWashType(newWash);
+            return Ok(response);
+
+        }
+
+        // DELETE api/manage/wash/
+        [HttpDelete]
+        public ActionResult<MultivalueWash> DeleteWashType(WashIdRequest deleteName)
+        {
+
+            var response = _repository.DeleteWashType(deleteName);
+            return Ok(response);
+
+        }
     }
 }

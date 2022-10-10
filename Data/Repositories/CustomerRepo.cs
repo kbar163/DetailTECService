@@ -90,6 +90,11 @@ namespace DetailTECService.Data
     
         }
 
+
+        //Entrada: Un string query que contiene un SQL Query y un string deleteId que contiene
+        //un primary key para una tabla en la base de datos.
+        //Proceso: Se conecta a la base de datos y ejecuta el query de eliminacion segun fue especificado.
+        //Salida: booleano que indica si la operacion fue exitosa o no.
         private bool DeleteDatabyId(string query, string deleteId)
         {
             var isSuccessful = false;
@@ -379,7 +384,7 @@ namespace DetailTECService.Data
 
         //Proceso: 
         //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
-        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla CLIENTE
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla CLIENTE_DIRECCION
         //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
         //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
         //la operacion.
