@@ -16,6 +16,7 @@ builder.Services.AddScoped<ICustomerRepository, CustomerRepo>();
 builder.Services.AddScoped<IProviderRepository, ProviderRepo>();
 builder.Services.AddScoped<IProductRepository, ProductRepo>();
 builder.Services.AddScoped<IWashRepository, WashRepo>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepo>();
 
 
 
