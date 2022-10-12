@@ -15,6 +15,22 @@ namespace DetailTECService.Data
 
         }
 
+
+        //Proceso: Punto de entrada del proceso de crear una cita, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos. 
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse CreateAppointment(NewAppRequest newApp)
+        {
+            ActionResponse response;
+            string appQuery = @"INSERT INTO CITA
+            VALUES (@cedula_cliente , @placa ,
+            @nombre_sucursal , @nombre_lavado , @cedula_trabajador, @hora , @facturada)";
+            response = writeAppDB(appQuery,newApp);
+            return response;
+        }
+
         //Proceso: Punto de entrada del proceso de obtener todos las citas, hace uso de varias
         //funciones auxiliares que obtienen datos de la base de datos y le dan el formato necesario
         //utilizando los modelos creados.
@@ -29,6 +45,107 @@ namespace DetailTECService.Data
             FROM CITA";
             DataTable appointmentData = GetTableData(appointmentQuery);
             response = AllAppointmentsMessage(appointmentData);
+            return response;
+        }
+
+
+        //Entrada: AppIdRequest deleteId, tiene una propiedad int que representa el id de una cita
+        //Proceso: Se crea un query para eliminar de la DB la cita cuyo ID_CITA haga match con
+        //la propiedad id_cita de deleteId.
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar DELETE sobre la base de datos en la tabla CITA
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        public ActionResponse DeleteAppointment(AppIdRequest deleteId)
+        {
+            ActionResponse response = new ActionResponse();
+            string query = @"DELETE FROM CITA
+            WHERE CITA.ID_CITA = @id";
+            
+            try
+            {
+
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@id", deleteId.id_cita));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();
+                        response.actualizado = true;
+                        response.mensaje = "Cita eliminada exitosamente";
+                        
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = "Error al eliminar cita";
+                }
+            }
+
+            return response;
+        }
+
+
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla CITA
+        //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
+        private ActionResponse writeAppDB(string query, NewAppRequest newApp)
+        {
+            ActionResponse response = new ActionResponse();
+            string workersQuery = @"SELECT TRABAJADOR.CEDULA_TRABAJADOR
+            FROM TRABAJADOR";
+
+            DateTime appDate = DateTime.Parse(newApp.hora, null, System.Globalization.DateTimeStyles.RoundtripKind);
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.Add(new SqlParameter("@cedula_cliente", newApp.cedula_cliente));
+                        command.Parameters.Add(new SqlParameter("@placa", newApp.placa_vehiculo));
+                        command.Parameters.Add(new SqlParameter("@nombre_sucursal", newApp.nombre_sucursal));
+                        command.Parameters.Add(new SqlParameter("@nombre_lavado", newApp.nombre_lavado));
+                        var workerTable = GetTableData(workersQuery);
+                        Random rnd = new Random();
+                        int index = rnd.Next(0,workerTable.Rows.Count);
+                        command.Parameters.Add(new SqlParameter("@cedula_trabajador",
+                        workerTable.Rows[index]["CEDULA_TRABAJADOR"]));
+                        command.Parameters.Add(new SqlParameter("@hora", appDate));
+                        command.Parameters.Add(new SqlParameter("@facturada", newApp.facturada));
+                        connection.Open();
+                        Console.WriteLine("Connection to DB stablished");
+                        command.ExecuteNonQuery();    
+                        response.actualizado = true;
+                        response.mensaje = "Cita creada exitosamente";
+                    } 
+                }   
+            }
+
+            catch (Exception ex)
+            {
+                if(ex is ArgumentException ||
+                   ex is SqlException || ex is InvalidOperationException)
+                {
+                    Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
+                    response.actualizado = false;
+                    response.mensaje = "Error al crear cita";
+                }
+            }
             return response;
         }
 
@@ -203,7 +320,5 @@ namespace DetailTECService.Data
             }
             return dbTable;
         }
-
-        
     }
 }

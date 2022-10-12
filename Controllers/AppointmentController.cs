@@ -24,6 +24,26 @@ namespace DetailTECService.Controllers
             _repository = repository;
         }
 
+        // POST api/manage/appointment/
+        [HttpPost]
+        public ActionResult<MultivalueAppointment> GetAllAppointments(NewAppRequest newApp)
+        {
+
+            var response = _repository.CreateAppointment(newApp);
+            return Ok(response);
+
+        }
+
+        // DELETE api/manage/appointment/
+        [HttpDelete]
+        public ActionResult<MultivalueAppointment> DeleteAppointment(AppIdRequest deletionId)
+        {
+
+            var response = _repository.DeleteAppointment(deletionId);
+            return Ok(response);
+
+        }
+
 
         // GET api/manage/appointment/all
         [HttpGet("all")]
