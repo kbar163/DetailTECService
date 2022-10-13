@@ -77,15 +77,23 @@ namespace DetailTECService.Data
             WHERE CEDULA_CLIENTE = @cedula";
             var phoneQuery = @"DELETE FROM CLIENTE_TELEFONO
             WHERE CEDULA_CLIENTE = @cedula";
+            var appQuery = @"DELETE FROM CITA
+            WHERE CEDULA_CLIENTE = @cedula";
 
+            var deleteAppointment = DeleteDatabyId(appQuery, customerId.cedula_cliente);
             var deletePhone = DeleteDatabyId(phoneQuery, customerId.cedula_cliente);
             var deleteAddress = DeleteDatabyId(addressQuery, customerId.cedula_cliente);
             var deleteCustomer = DeleteDatabyId(customerQuery, customerId.cedula_cliente);
 
-            if( deletePhone && deleteAddress && deleteCustomer)
+            if( deletePhone && deleteAddress
+             && deleteCustomer && deleteAppointment)
             {
                 response.actualizado = true;
                 response.mensaje = "Cliente eliminado exitosamente";
+            }
+            else
+            {
+                response.mensaje = "Error al eliminar cliente";
             }
             
             return response;
