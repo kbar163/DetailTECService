@@ -126,7 +126,7 @@ namespace DetailTECService.Data
                         command.Parameters.Add(new SqlParameter("@cedula_trabajador",
                         workerTable.Rows[index]["CEDULA_TRABAJADOR"]));
                         command.Parameters.Add(new SqlParameter("@hora", appDate));
-                        command.Parameters.Add(new SqlParameter("@facturada", newApp.facturada));
+                        command.Parameters.Add(new SqlParameter("@facturada", "FALSE"));
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();    
@@ -228,7 +228,7 @@ namespace DetailTECService.Data
                         string formattedTime = appTime
                         .ToString("o", System.Globalization.CultureInfo.InvariantCulture);
                         appointment.hora = formattedTime;
-                        appointment.facturada = (int)appointments.Rows[index]["FACTURADA"];
+                        appointment.facturada = (bool)appointments.Rows[index]["FACTURADA"];
                         var washtypeTable = GetDataByName(durationQuery, appointment.nombre_lavado);
                         appointment.duracion = (int)washtypeTable.Rows[0]["DURACION"];
                         var workerTable = GetDataById(workerQuery, appointment.cedula_trabajador);

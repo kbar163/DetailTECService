@@ -33,7 +33,8 @@ namespace DetailTECService.Data
             ActionResponse response;
             string query = @"INSERT INTO CLIENTE
             VALUES (@cedula , @nombre ,
-            @apellido_1 , @apellido_2 , @correo , @usuario , @password, 5, 5, 5)";
+            @apellido_1 , @apellido_2 , @correo , @usuario , @password ,
+            @puntos_acum, @puntos_obt , @puntos_redim)";
             response = WriteCustomerDB(query, newCustomer);
             if(response.actualizado) EmailSender.SendCreationEmail(newCustomer);
             return response;
@@ -139,7 +140,7 @@ namespace DetailTECService.Data
             MultivalueCustomer response;
             string customerQuery = @"SELECT CLIENTE.CEDULA_CLIENTE, CLIENTE.NOMBRE, CLIENTE.PRIMER_APELLIDO,
             CLIENTE.SEGUNDO_APELLIDO, CLIENTE.CORREO_CLIENTE, CLIENTE.USUARIO, CLIENTE.PASSWORD_CLIENTE,
-            CLIENTE.PUNTOS_ACUM
+            CCLIENTE.PUNTOS_ACUM , CLIENTE.PUNTOS_OBT , CLIENTE.PUNTOS_REDIM
             FROM CLIENTE";
             DataTable customerData = GetTableData(customerQuery);
             response = AllCustomersMessage(customerData);
@@ -216,6 +217,8 @@ namespace DetailTECService.Data
                     customer.usuario = (string)customers.Rows[index]["USUARIO"];
                     customer.password_cliente = (string)customers.Rows[index]["PASSWORD_CLIENTE"];
                     customer.puntos_acum = (int)customers.Rows[index]["PUNTOS_ACUM"];
+                    customer.puntos_obt = (int)customers.Rows[index]["PUNTOS_OBT"];
+                    customer.puntos_redim = (int)customers.Rows[index]["PUNTOS_REDIM"];
                     var addressTable = GetDataById(addressQuery, customer.cedula_cliente);
                     GetCustomerAddress(addressTable, customer);
                     var phoneTable = GetDataById(phoneQuery, customer.cedula_cliente);
@@ -355,6 +358,9 @@ namespace DetailTECService.Data
                         command.Parameters.Add(new SqlParameter("@correo", newCustomer.correo_cliente));
                         command.Parameters.Add(new SqlParameter("@usuario", newCustomer.usuario));
                         command.Parameters.Add(new SqlParameter("@password", newCustomer.password_cliente));
+                        command.Parameters.Add(new SqlParameter("@puntos_acum", 10));
+                        command.Parameters.Add(new SqlParameter("@puntos_obt", 11));
+                        command.Parameters.Add(new SqlParameter("@puntos_redim", 1));
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();

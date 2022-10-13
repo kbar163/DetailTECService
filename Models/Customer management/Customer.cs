@@ -12,6 +12,8 @@ namespace DetailTECService.Models
         public string? usuario { get; set; }
         public string? password_cliente { get; set; }
         public int puntos_acum { get; set; }
+        public int puntos_obt { get; set; }
+        public int puntos_redim { get; set; }
         public List<Address>? direcciones { get; set; }
         public List<string>? telefonos {get; set; }
     
