@@ -15,7 +15,7 @@ namespace DetailTECService.Models
         public string? nombre_trabajador { get; set; }
         public string? apellido_trabajador { get; set; }
         public string? hora { get; set; }
-        public int facturada { get; set; }
+        public bool facturada { get; set; }
         public int duracion { get; set; }
     }
     

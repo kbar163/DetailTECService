@@ -4,7 +4,7 @@ namespace DetailTECService.Data
 {
     public interface IBillingRepository
     {
-        ActionResponse CreateBill(BillRequest newBill);
+        BillResponse CreateBill(BillRequest newBill);
 
     }
 }

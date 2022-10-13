@@ -1,5 +1,7 @@
 using System.Data;
 using DetailTECService.Models;
+using HtmlAgilityPack;
+using IronPdf;
 using Microsoft.Data.SqlClient;
 
 namespace DetailTECService.Data
@@ -16,9 +18,9 @@ namespace DetailTECService.Data
 
         }
 
-        public ActionResponse CreateBill(BillRequest newBill)
+        public BillResponse CreateBill(BillRequest newBill)
         {
-            ActionResponse response = new ActionResponse();
+            BillResponse response = new BillResponse();
 
             string billQuery = @"INSERT INTO FACTURA
             VALUES (@cedula_cliente , @id_cita , @cantidad_snacks ,
@@ -30,20 +32,21 @@ namespace DetailTECService.Data
             FROM CITA WHERE CITA.ID_CITA = @id";
 
             var appTable = GetDataById(appQuery,newBill.id_cita);
-            var facturada = (int)appTable.Rows[0]["FACTURADA"];
-            if(facturada == 0)
+            var facturada = (bool)appTable.Rows[0]["FACTURADA"];
+            if(!facturada)
             {
                 response = WriteBillDB(billQuery,newBill,appTable);
             }
 
-            GenerateBill(appTable);
+            RequestBill(appTable);
+            response.facturada = true;
             response.mensaje = "Factura creada exitosamente";
             return response;
         }
 
-        private ActionResponse WriteBillDB(string billQuery, BillRequest newBill, DataTable appTable)
+        private BillResponse WriteBillDB(string billQuery, BillRequest newBill, DataTable appTable)
         {
-            ActionResponse response = new ActionResponse();
+            BillResponse response = new BillResponse();
 
             try
             {
@@ -60,7 +63,7 @@ namespace DetailTECService.Data
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();    
-                        response.actualizado = true;
+                        response.facturada = true;
                         response.mensaje = "Factura creada exitosamente";
                     } 
                 }
@@ -74,7 +77,7 @@ namespace DetailTECService.Data
                    ex is SqlException || ex is InvalidOperationException)
                 {
                     Console.WriteLine("ERROR: " + ex.Message +  "triggered by " + ex.Source);
-                    response.actualizado = false;
+                    response.facturada = false;
                     response.mensaje = "Error al crear factura";
                 }
             }
@@ -256,7 +259,7 @@ namespace DetailTECService.Data
             return dbTable;
         }
 
-        private void GenerateBill(DataTable appTable)
+        private void RequestBill(DataTable appTable)
         {
             var cedula_cliente = (string)appTable.Rows[0]["CEDULA_CLIENTE"];
             var cedula_trabajador = (string)appTable.Rows[0]["CEDULA_TRABAJADOR"];
@@ -265,7 +268,7 @@ namespace DetailTECService.Data
             var placa_vehiculo = (string)appTable.Rows[0]["PLACA_VEHICULO"];
 
             string workerQuery = @"SELECT TRABAJADOR.NOMBRE,
-            TRABAJADOR.PRIMER_APELLIDO
+            TRABAJADOR.PRIMER_APELLIDO, TRABAJADOR.SEGUNDO_APELLIDO
             FROM TRABAJADOR WHERE TRABAJADOR.CEDULA_TRABAJADOR = @id";
 
             string washQuery = @"SELECT LAVADO.PRECIO
@@ -276,18 +279,105 @@ namespace DetailTECService.Data
             FACTURA.PAGO_PUNTOS
             FROM FACTURA WHERE FACTURA.ID_CITA = @id";
 
+            string customerQuery =@"SELECT CLIENTE.NOMBRE ,
+            CLIENTE.PRIMER_APELLIDO , CLIENTE.SEGUNDO_APELLIDO
+            FROM CLIENTE WHERE CLIENTE.CEDULA_CLIENTE = @id";
+
             var workerData = GetDataById(workerQuery,cedula_trabajador);
             var washData = GetDataById(washQuery,nombre_lavado);
             var billData = GetDataById(billQuery,id_cita);
+            var customerData = GetDataById(customerQuery,cedula_cliente);
+            var nombre_cliente = (string)customerData.Rows[0]["NOMBRE"];
+            var primer_apellido_cliente = (string)customerData.Rows[0]["PRIMER_APELLIDO"];
+            var segundo_apellido_cliente = (string)customerData.Rows[0]["SEGUNDO_APELLIDO"];
             var nombre_trabajador = (string)workerData.Rows[0]["NOMBRE"];
             var primer_apellido_trabajador = (string)workerData.Rows[0]["PRIMER_APELLIDO"];
             var segundo_apellido_trabajador = (string)workerData.Rows[0]["SEGUNDO_APELLIDO"];
+            var nombre_sucursal = (string)appTable.Rows[0]["NOMBRE_SUCURSAL"];
             var precio_lavado = (int)washData.Rows[0]["PRECIO"];
             var precio_snacks = 1500;
             var precio_bebida = 1000;
             var id_factura = (int)billData.Rows[0]["ID_FACTURA"];
             var cantidad_snacks = (int)billData.Rows[0]["CANTIDAD_SNACKS"];
             var cantidad_bebidas = (int)billData.Rows[0]["CANTIDAD_BEBIDAS"];
+            var pago_puntos = (bool)billData.Rows[0]["PAGO_PUNTOS"];
+            var fecha = (DateTime)appTable.Rows[0]["HORA"];
+            
+
+            GenerateBill(cedula_cliente,cedula_trabajador,nombre_lavado,id_cita,
+            placa_vehiculo,nombre_trabajador,primer_apellido_trabajador,segundo_apellido_trabajador,
+            precio_lavado,precio_bebida,precio_snacks,id_factura,cantidad_bebidas,cantidad_snacks,
+            nombre_cliente, primer_apellido_cliente,segundo_apellido_cliente, nombre_sucursal, fecha,pago_puntos);
+            
+        }
+
+        private void GenerateBill(string cedula_cliente, string cedula_trabajador, string nombre_lavado, int id_cita, string placa_vehiculo, string nombre_trabajador, string primer_apellido_trabajador, string segundo_apellido_trabajador, int precio_lavado, int precio_bebida, int precio_snacks, int id_factura, int cantidad_bebidas, int cantidad_snacks, string nombre_cliente, string primer_apellido_cliente, string segundo_apellido_cliente, string nombre_sucursal, DateTime fecha_hora, bool pago_puntos)
+        {
+            HtmlDocument billDoc = new HtmlDocument();
+            billDoc.Load(@"Data/File Generation/Templates/BillBase.html");
+            var trabajador = billDoc.GetElementbyId("trabajador");
+            trabajador.InnerHtml = nombre_trabajador+" "+primer_apellido_trabajador+" "+segundo_apellido_trabajador;
+            var sucursal = billDoc.GetElementbyId("sucursal");
+            sucursal.InnerHtml = nombre_sucursal;
+            var cliente = billDoc.GetElementbyId("cliente");
+            cliente.InnerHtml = nombre_cliente +" "+primer_apellido_cliente+" "+segundo_apellido_cliente;
+            var placa = billDoc.GetElementbyId("placa");
+            placa.InnerHtml = placa_vehiculo;
+            var fecha = billDoc.GetElementbyId("fecha");
+            fecha.InnerHtml = fecha_hora.Date.ToShortDateString();
+            var idFactura = billDoc.GetElementbyId("id");
+            idFactura.InnerHtml = "ID: "+id_factura.ToString();
+            var lavado = billDoc.GetElementbyId("lavado");
+            lavado.InnerHtml = nombre_lavado;
+            var puntos = billDoc.GetElementbyId("puntos01");
+            var montoLavado = billDoc.GetElementbyId("precio01");
+            var subLavado = billDoc.GetElementbyId("subtotal01");
+            var subtotalWash = 0;
+            if(pago_puntos)
+            {   
+                
+                puntos.InnerHtml = "SI";
+                montoLavado.InnerHtml = "₡0.00";
+                subLavado.InnerHtml = "₡0.00";
+            }
+            else
+            {   
+                puntos.InnerHtml = "NO";
+                montoLavado.InnerHtml = "₡"+precio_lavado.ToString();
+                subLavado.InnerHtml = "₡"+precio_lavado.ToString();
+                subtotalWash = precio_lavado;
+            }
+            var montoSnack = billDoc.GetElementbyId("precio02");
+            var subSnack = billDoc.GetElementbyId("subtotal02");
+            var unidadesSnack = billDoc.GetElementbyId("unidades02");
+            unidadesSnack.InnerHtml = cantidad_snacks.ToString();
+            int billedSnacks = cantidad_snacks - 1;
+            int calcSnack = billedSnacks * precio_snacks;
+            montoSnack.InnerHtml = "₡"+calcSnack.ToString();
+            subSnack.InnerHtml = "₡"+calcSnack.ToString();
+
+            var montoBebida = billDoc.GetElementbyId("precio03");
+            var subBebida = billDoc.GetElementbyId("subtotal03");
+            var unidadesBebida = billDoc.GetElementbyId("unidades03");
+            unidadesBebida.InnerHtml = cantidad_bebidas.ToString();
+            int billedBeverage = cantidad_bebidas - 1;
+            int calcBeverage = billedBeverage * precio_bebida;
+            montoBebida.InnerHtml = "₡"+calcBeverage.ToString();
+            subBebida.InnerHtml = "₡"+calcBeverage.ToString();
+            var totalBill = calcBeverage+calcSnack+subtotalWash;
+            var total = billDoc.GetElementbyId("total");
+            total.InnerHtml = "₡"+totalBill.ToString();
+
+            billDoc.Save(@"Data/File Generation/BillDoc.html");
+            var Renderer = new ChromePdfRenderer();
+            var pdf = Renderer.RenderHtmlFileAsPdf("Data/File Generation/BillDoc.html");
+            pdf.SaveAs("Data/File Generation/Generated/Bills/factura-" + id_factura + ".pdf");
+            File.Delete("Data/File Generation/BillDoc.html");
+            
+
+            
+            
+
         }
     }
 }
