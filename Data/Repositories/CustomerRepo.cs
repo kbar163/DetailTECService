@@ -33,7 +33,7 @@ namespace DetailTECService.Data
             ActionResponse response;
             string query = @"INSERT INTO CLIENTE
             VALUES (@cedula , @nombre ,
-            @apellido_1 , @apellido_2 , @correo , @usuario , @password , @puntos)";
+            @apellido_1 , @apellido_2 , @correo , @usuario , @password, 5, 5, 5)";
             response = WriteCustomerDB(query, newCustomer);
             if(response.actualizado) EmailSender.SendCreationEmail(newCustomer);
             return response;
@@ -54,8 +54,7 @@ namespace DetailTECService.Data
             SEGUNDO_APELLIDO = @apellido_2 ,
             CORREO_CLIENTE = @correo ,
             USUARIO = @usuario ,
-            PASSWORD_CLIENTE = @password,
-            PUNTOS_ACUM = @puntos
+            PASSWORD_CLIENTE = @password
             WHERE CEDULA_CLIENTE = @cedula";
             response = WriteCustomerDB(query, newCustomer);
             return response;
@@ -356,7 +355,6 @@ namespace DetailTECService.Data
                         command.Parameters.Add(new SqlParameter("@correo", newCustomer.correo_cliente));
                         command.Parameters.Add(new SqlParameter("@usuario", newCustomer.usuario));
                         command.Parameters.Add(new SqlParameter("@password", newCustomer.password_cliente));
-                        command.Parameters.Add(new SqlParameter("@puntos", newCustomer.puntos_acum));
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();
