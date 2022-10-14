@@ -82,7 +82,10 @@ namespace DetailTECService.Data
             WHERE CEDULA_CLIENTE = @cedula";
             var appQuery = @"DELETE FROM CITA
             WHERE CEDULA_CLIENTE = @cedula";
+            var billQuery = @"DELETE FROM FACTURA
+            WHERE CEDULA_CLIENTE = @cedula";
 
+            var deleteBill = DeleteDatabyId(billQuery, customerId.cedula_cliente);
             var deleteAppointment = DeleteDatabyId(appQuery, customerId.cedula_cliente);
             var deletePhone = DeleteDatabyId(phoneQuery, customerId.cedula_cliente);
             var deleteAddress = DeleteDatabyId(addressQuery, customerId.cedula_cliente);
