@@ -93,14 +93,12 @@ namespace DetailTECService.Data
 
             var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
             var deleteProducts = DeleteDataById(productQuery, deleteName.nombre_lavado);
-            var deleteWashType = DeleteDataById(washQuery, deleteName.nombre_lavado);
 
-            if( deleteRoles && deleteProducts && deleteRoles)
+            if(deleteRoles.actualizado && deleteProducts.actualizado)
             {
-                response.actualizado = true;
-                response.mensaje = "Tipo de lavado eliminado exitosamente";
+                response = DeleteDataById(washQuery, deleteName.nombre_lavado);
             }
-            
+    
             return response;
         }
 
@@ -109,9 +107,9 @@ namespace DetailTECService.Data
         //un primary key para una tabla en la base de datos.
         //Proceso: Se conecta a la base de datos y ejecuta el query de eliminacion segun fue especificado.
         //Salida: booleano que indica si la operacion fue exitosa o no.
-        private bool DeleteDataById(string query, string nombre_lavado)
+        private ActionResponse DeleteDataById(string query, string nombre_lavado)
         {
-            var isSuccessful = false;
+            ActionResponse response = new ActionResponse();
             try
             {
 
@@ -123,21 +121,25 @@ namespace DetailTECService.Data
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();
-                        isSuccessful = true;   
+                        response.actualizado = true;
+                        response.mensaje = "Lavado eliminado exitosamente";   
                     } 
                 }   
             }
-
             catch (Exception ex)
             {
                 if(ex is ArgumentException ||
                    ex is SqlException || ex is InvalidOperationException)
                 {
-                    isSuccessful = false;
+                    response.actualizado = false;
+                    if(ex.Message.Contains("FK_CITA_NOMBRE_LAVADO"))
+                    {
+                        response.mensaje = "Error: El lavado que desea eliminar tiene citas asociadas.";
+                    }
                 }
             }
 
-            return isSuccessful;
+            return response;
         }
 
         private ActionResponse WriteWashDB(string query, WashType newWash)
