@@ -35,6 +35,7 @@ namespace DetailTECService.Data
             VALUES (@cedula , @nombre ,
             @apellido_1 , @apellido_2 , @correo , @usuario , @password ,
             @puntos_acum, @puntos_obt , @puntos_redim)";
+            newCustomer.password_cliente = PasswordGenerator.Generate();
             response = WriteCustomerDB(query, newCustomer);
             if(response.actualizado) EmailSender.SendCreationEmail(newCustomer);
             return response;
@@ -342,7 +343,7 @@ namespace DetailTECService.Data
             ActionResponse response = new ActionResponse();
             string verb = "";
             string infinitive = "";
-            newCustomer.password_cliente = PasswordGenerator.Generate();
+            
 
             try
             {

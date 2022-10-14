@@ -27,7 +27,7 @@ namespace DetailTECService.Data
             string appQuery = @"INSERT INTO CITA
             VALUES (@cedula_cliente , @placa ,
             @nombre_sucursal , @nombre_lavado , @cedula_trabajador, @hora , @facturada)";
-            response = writeAppDB(appQuery,newApp);
+            response = WriteAppDB(appQuery,newApp);
             return response;
         }
 
@@ -102,7 +102,7 @@ namespace DetailTECService.Data
         //Salida: ActionResponse response: un objeto que tiene una propiedad booleana que indica si la 
         //operacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
         //la operacion.
-        private ActionResponse writeAppDB(string query, NewAppRequest newApp)
+        private ActionResponse WriteAppDB(string query, NewAppRequest newApp)
         {
             ActionResponse response = new ActionResponse();
             string workersQuery = @"SELECT TRABAJADOR.CEDULA_TRABAJADOR

@@ -26,7 +26,7 @@ namespace DetailTECService.Controllers
 
         // POST api/manage/appointment/
         [HttpPost]
-        public ActionResult<MultivalueAppointment> GetAllAppointments(NewAppRequest newApp)
+        public ActionResult<ActionResponse> CreateAppointment(NewAppRequest newApp)
         {
 
             var response = _repository.CreateAppointment(newApp);
@@ -36,7 +36,7 @@ namespace DetailTECService.Controllers
 
         // DELETE api/manage/appointment/
         [HttpDelete]
-        public ActionResult<MultivalueAppointment> DeleteAppointment(AppIdRequest deletionId)
+        public ActionResult<ActionResponse> DeleteAppointment(AppIdRequest deletionId)
         {
 
             var response = _repository.DeleteAppointment(deletionId);
