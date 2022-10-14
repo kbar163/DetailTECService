@@ -160,14 +160,10 @@ namespace DetailTECService.Data
             var costo_puntos = (int)washtypeTable.Rows[0]["COSTO_PUNTOS"];
             
             
-            if(newBill.pago_puntos == 1)
+            if(newBill.pago_puntos)
             {
-                if(puntos_acum > costo_puntos)
-                {
-                    puntos_redim = puntos_redim + costo_puntos;
-                    puntos_acum = puntos_acum - costo_puntos;
-                    
-                }
+                puntos_redim = puntos_redim + costo_puntos;
+                puntos_acum = puntos_acum - costo_puntos;
             }
             else
             {
