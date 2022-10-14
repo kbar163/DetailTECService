@@ -91,12 +91,12 @@ namespace DetailTECService.Data
             var roleQuery = @"DELETE FROM LAVADO_ROL
             WHERE NOMBRE_LAVADO = @nombre";
 
-            var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
-            var deleteProducts = DeleteDataById(productQuery, deleteName.nombre_lavado);
-
-            if(deleteRoles.actualizado && deleteProducts.actualizado)
+            response = DeleteDataById(washQuery, deleteName.nombre_lavado);
+            
+            if(response.actualizado)
             {
-                response = DeleteDataById(washQuery, deleteName.nombre_lavado);
+                var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
+                var deleteProducts = DeleteDataById(productQuery, deleteName.nombre_lavado);
             }
     
             return response;
