@@ -49,7 +49,7 @@ VALUES
 
 INSERT INTO CLIENTE_DIRECCION
 VALUES
-('409837345','San Jose','Montes De Oca','San Pedro'),
+('409837345','San José','Montes De Oca','San Pedro'),
 ('409837345','Cartago','Turrialba','Turrialba'),
 ('709837345','Alajuela','Palmares','Palmares'),
 ('609837345','Heredia','San Isidro','San Francisco'),
