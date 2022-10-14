@@ -18,6 +18,13 @@ namespace DetailTECService.Data
 
         }
 
+        //Proceso: Punto de entrada del proceso de crear una factura, hace uso de una funcion
+        //auxiliar que inserta informacion a la base de datos en caso que la cita asociada a
+        //la factura no haya sido procesada anteriormente, ademas se apoya de funciones que generan
+        //el archivo PDF de la factura. 
+        //Salida: BillResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //factura fue creada o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         public BillResponse CreateBill(BillRequest newBill)
         {
             BillResponse response = new BillResponse();
@@ -44,6 +51,12 @@ namespace DetailTECService.Data
             return response;
         }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar INSERT o UPDATE sobre la base de datos en la tabla FACTURA
+        //Salida: BillResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //factura fue creada o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         private BillResponse WriteBillDB(string billQuery, BillRequest newBill, DataTable appTable)
         {
             BillResponse response = new BillResponse();
@@ -84,6 +97,10 @@ namespace DetailTECService.Data
             return response;
         }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar UPDATE sobre la base de datos en la tabla CITA para actualizar el valor
+        //de la columna FACTURADA cuando una factura asociada a la cita es generada.
         private void SetAsPaid(DataTable appTable)
         {
             var query = @"UPDATE CITA
@@ -116,6 +133,12 @@ namespace DetailTECService.Data
             }
         }
 
+
+        //Proceso: 
+        //Obtiene los datos necesarios de la base de datos para hacer las operaciones aritmeticas
+        //necesarias para el manejo de puntos de cliente, considera los casos en los que el cliente
+        //paga con puntos o efectivo y envia los valores de puntos modificados como parametros
+        //a una funcion auxiliar que se encarga de la insercion de los mismos a la base de datos.
         private void PointOperations(BillRequest newBill, DataTable appTable)
         {
             string customerQuery = @"SELECT CLIENTE.CEDULA_CLIENTE ,
@@ -157,6 +180,10 @@ namespace DetailTECService.Data
 
         }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar UPDATE sobre la base de datos en la tabla CLIENTE
+        //Actualiza los valores de puntos del cliente en la base de datos
         private void AssignPoints(int puntos_acum, int puntos_obt, int puntos_redim,
          string cedula_cliente)
         {
@@ -194,6 +221,13 @@ namespace DetailTECService.Data
             }
         }
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar el query parametrizado con un identificado especifico a cada tabla
+        // de la que se desea obtener datos en la base de datos y escribe el resultado al
+        //DataTable dbTable.
+        //Salida: DataTable dbTable con la informacion solicitada en el query de ser exitoso,
+        //DataTable data vacio en caso de que el query no fuese exitoso.
         private DataTable GetDataById(string query, int id)
         {
             var dbTable = new DataTable();
@@ -227,6 +261,13 @@ namespace DetailTECService.Data
         }
 
 
+        //Proceso: 
+        //Intenta conectarse a la base de datos haciendo uso de un SqlConnection,
+        //Intenta ejecutar el query parametrizado con un identificado especifico a cada tabla
+        // de la que se desea obtener datos en la base de datos y escribe el resultado al
+        //DataTable dbTable.
+        //Salida: DataTable dbTable con la informacion solicitada en el query de ser exitoso,
+        //DataTable data vacio en caso de que el query no fuese exitoso.
         private DataTable GetDataById(string query, string id)
         {
             var dbTable = new DataTable();
@@ -259,6 +300,10 @@ namespace DetailTECService.Data
             return dbTable;
         }
 
+        //Proceso: 
+        //Obtiene toda la informacion necesaria para crear facturas de la base de datos y las envia
+        //como parametro a la funcion que se encarga de crear el documento PDF. Utiliza funciones auxiliares
+        //para obtener los datos de la DB a partir de queries creados dentro de RequestBill.
         private void RequestBill(DataTable appTable)
         {
             var cedula_cliente = (string)appTable.Rows[0]["CEDULA_CLIENTE"];
@@ -311,6 +356,12 @@ namespace DetailTECService.Data
             
         }
 
+        //Proceso: 
+        //Utiliza un HTML base para crear una factura utilizando identificadores seteados en los
+        //tags html, de los cuales se modifica su valor interno para ingresar la informacion
+        //obtenida de la base de datos, posteriormente se renderiza el html como PDF.
+        //Se utilizan las librerias HTMLAgility y IronPDF respectivamente para estos procesos.
+        //Salida: PDF de la factura guardado en la direccion relativa Data/File Generation/Generated/Bills/
         private void GenerateBill(string cedula_cliente, string cedula_trabajador, string nombre_lavado, int id_cita, string placa_vehiculo, string nombre_trabajador, string primer_apellido_trabajador, string segundo_apellido_trabajador, int precio_lavado, int precio_bebida, int precio_snacks, int id_factura, int cantidad_bebidas, int cantidad_snacks, string nombre_cliente, string primer_apellido_cliente, string segundo_apellido_cliente, string nombre_sucursal, DateTime fecha_hora, bool pago_puntos)
         {
             HtmlDocument billDoc = new HtmlDocument();
