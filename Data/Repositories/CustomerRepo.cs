@@ -56,7 +56,9 @@ namespace DetailTECService.Data
             CORREO_CLIENTE = @correo ,
             USUARIO = @usuario ,
             PASSWORD_CLIENTE = @password,
-            PUNTOS_ACUM = @puntos
+            PUNTOS_ACUM = @puntos_acum,
+            PUNTOS_OBT = @puntos_obt,
+            PUNTOS_REDIM = @puntos_redim
             WHERE CEDULA_CLIENTE = @cedula";
             response = WriteCustomerDB(query, newCustomer);
             return response;
@@ -367,9 +369,9 @@ namespace DetailTECService.Data
                         command.Parameters.Add(new SqlParameter("@correo", newCustomer.correo_cliente));
                         command.Parameters.Add(new SqlParameter("@usuario", newCustomer.usuario));
                         command.Parameters.Add(new SqlParameter("@password", newCustomer.password_cliente));
-                        command.Parameters.Add(new SqlParameter("@puntos_acum", 10));
-                        command.Parameters.Add(new SqlParameter("@puntos_obt", 11));
-                        command.Parameters.Add(new SqlParameter("@puntos_redim", 1));
+                        command.Parameters.Add(new SqlParameter("@puntos_acum", newCustomer.puntos_acum));
+                        command.Parameters.Add(new SqlParameter("@puntos_obt", newCustomer.puntos_obt));
+                        command.Parameters.Add(new SqlParameter("@puntos_redim", newCustomer.puntos_redim));
                         connection.Open();
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();
