@@ -81,9 +81,10 @@ VALUES
 
 INSERT INTO CITA (CEDULA_CLIENTE, PLACA_VEHICULO, NOMBRE_SUCURSAL, NOMBRE_LAVADO, CEDULA_TRABAJADOR, HORA, FACTURADA)
 VALUES
-('209837345','AAA111','San Pedro','Lavado avanzado','207650385','2022-11-16 13:21:11',0),
-('304930544','BBB111','San Pedro','Lavado simple','304930544','2022-10-24 13:21:11',0),
-('409837345','CCC111','San Pedro','Lavado y aspirado','304930544','2022-11-03 13:21:11',0),
-('609837345','DDD111','San Pedro','Lavado y aspirado','408730769','2022-11-16 16:00:00',0);
+('209837345','AAA111','Montes de Oca','Lavado simple','102340567','2022-11-16 13:21:11',0),
+('709837345','BBB111','Montes de Oca','Lavado simple','207650385','2022-10-24 13:21:11',0),
+('409837345','CCC111','Montes de Oca','Lavado avanzado','408730769','2022-11-03 13:21:11',0),
+('609837345','DDD111','Montes de Oca','Lavado avanzado','408730769','2022-11-16 16:00:00',0);
+
 
 
