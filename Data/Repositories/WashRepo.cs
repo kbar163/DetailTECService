@@ -90,9 +90,19 @@ namespace DetailTECService.Data
             WHERE NOMBRE_LAVADO = @nombre";
             var roleQuery = @"DELETE FROM LAVADO_ROL
             WHERE NOMBRE_LAVADO = @nombre";
+            var appQuery = @"SELECT CITA.ID_CITA
+            FROM CITA
+            WHERE CITA.NOMBRE_LAVADO = @nombre";
+
+            var appTable = GetDataById(appQuery,deleteName.nombre_lavado);
+
+            if(appTable.Rows.Count != 0)
+            {
+                response.mensaje = "Error: Para borrar este lavado, debe eliminar las citas asociadas";
+                return response;
+            }
 
             response = DeleteDataById(washQuery, deleteName.nombre_lavado);
-            
             if(response.actualizado)
             {
                 var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
@@ -132,10 +142,6 @@ namespace DetailTECService.Data
                    ex is SqlException || ex is InvalidOperationException)
                 {
                     response.actualizado = false;
-                    if(ex.Message.Contains("FK_CITA_NOMBRE_LAVADO"))
-                    {
-                        response.mensaje = "Error: El lavado que desea eliminar tiene citas asociadas.";
-                    }
                 }
             }
 
