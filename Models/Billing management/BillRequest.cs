@@ -8,7 +8,7 @@ namespace DetailTECService.Models
         public int id_cita { get; set; }
         public int cantidad_bebidas {get; set; }
         public int cantidad_snacks {get; set; }
-        public int pago_puntos {get; set; }
+        public bool pago_puntos {get; set; }
 
     }
     
