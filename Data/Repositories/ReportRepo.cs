@@ -19,6 +19,13 @@ namespace DetailTECService.Data
 
         }
 
+
+        //Proceso: Punto de entrada del proceso de crear un reporte, hace uso de funciones
+        //auxiliares que se encargan de tomar informacion de la base de datos para cada reporte especifico
+        //para su posterior generacion. 
+        //Salida: ReportResponse response: un objeto que tiene una propiedad booleana que indica si la 
+        //creacion fue exitosa o no, y una propiedad message con un string que describe el resultado de
+        //la operacion.
         public ReportResponse GenerateReport(ReportRequest newReport)
         {   
             var response = new ReportResponse();
@@ -47,6 +54,10 @@ namespace DetailTECService.Data
             return response;
         }
 
+        //Proceso: 
+        //Obtiene toda la informacion necesaria para crear reporte de puntos de la base de datos y las envia
+        //como parametro a la funcion que se encarga de crear el documento PDF. Utiliza funciones auxiliares
+        //para obtener los datos de la DB a partir de queries creados dentro de PointReport.
         private void PointReport()
         {
 
@@ -101,6 +112,10 @@ namespace DetailTECService.Data
             File.Delete("Data/File Generation/ReportDoc.html");
         }
 
+        //Proceso: 
+        //Obtiene toda la informacion necesaria para crear reporte planilla de la base de datos y las envia
+        //como parametro a la funcion que se encarga de crear el documento PDF. Utiliza funciones auxiliares
+        //para obtener los datos de la DB a partir de queries creados dentro de PayrollReport.
         private void PayrollReport()
         {
             var payrollQuery = @"SELECT
@@ -138,17 +153,17 @@ namespace DetailTECService.Data
                         var row = $"<tr id =\"{rowId.ToString()}\"><td class=\"text-center\">{nombre_completo}</td><td class=\"text-center\">{tipo_pago}</td><td class=\"text-center\" id={"lavado"+rowId.ToString()}></td><td class=\"text-right\" id={"costo"+rowId.ToString()}></td></tr>";
                         htmlTable.InnerHtml = htmlTable.InnerHtml + row;
                         var lavados = ReportDoc.GetElementbyId("lavado"+rowId.ToString());
-                        lavados.InnerHtml = lavados.InnerHtml + "<span class=\"custom-span\">"+(string)payrollData.Rows[index]["NOMBRE_LAVADO"]+"</span><hr>";
+                        lavados.InnerHtml = lavados.InnerHtml + "<span>"+(string)payrollData.Rows[index]["NOMBRE_LAVADO"]+"</span><hr>";
                         var costo = ReportDoc.GetElementbyId("costo"+rowId.ToString());
-                        costo.InnerHtml = costo.InnerHtml + "<span class=\"custom-span\">"+(int)payrollData.Rows[index]["COSTO_PERSONAL"]+"</span><hr>";
+                        costo.InnerHtml = costo.InnerHtml + "<span>"+(int)payrollData.Rows[index]["COSTO_PERSONAL"]+"</span><hr>";
                         payrollTotal = payrollTotal + (int)payrollData.Rows[index]["COSTO_PERSONAL"];
                     }
                     else
                     {
                         var lavados = ReportDoc.GetElementbyId("lavado"+rowId.ToString());
-                        lavados.InnerHtml = lavados.InnerHtml + "<span class=\"custom-span\">"+(string)payrollData.Rows[index]["NOMBRE_LAVADO"]+"</span><hr>";
+                        lavados.InnerHtml = lavados.InnerHtml + "<span>"+(string)payrollData.Rows[index]["NOMBRE_LAVADO"]+"</span><hr>";
                         var costo = ReportDoc.GetElementbyId("costo"+rowId.ToString());
-                        costo.InnerHtml = costo.InnerHtml + "<span class=\"custom-span\">"+(int)payrollData.Rows[index]["COSTO_PERSONAL"]+"</span><hr>";
+                        costo.InnerHtml = costo.InnerHtml + "<span>"+(int)payrollData.Rows[index]["COSTO_PERSONAL"]+"</span><hr>";
                         payrollTotal = payrollTotal + (int)payrollData.Rows[index]["COSTO_PERSONAL"];
                     }
                      
@@ -167,6 +182,10 @@ namespace DetailTECService.Data
             File.Delete("Data/File Generation/ReportDoc.html");
         }
 
+        //Proceso: 
+        //Obtiene toda la informacion necesaria para crear reporte de lavados por cliente de la base de datos y las envia
+        //como parametro a la funcion que se encarga de crear el documento PDF. Utiliza funciones auxiliares
+        //para obtener los datos de la DB a partir de queries creados dentro de WashReport.
         private void WashReport(string cedula)
         {
             var washQuery = @"SELECT
