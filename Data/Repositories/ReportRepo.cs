@@ -103,7 +103,68 @@ namespace DetailTECService.Data
 
         private void PayrollReport()
         {
-            Console.WriteLine("Not implemented");
+            var payrollQuery = @"SELECT
+            TRABAJADOR.CEDULA_TRABAJADOR,TRABAJADOR.NOMBRE,TRABAJADOR.PRIMER_APELLIDO,
+            TRABAJADOR.SEGUNDO_APELLIDO,LAVADO.NOMBRE_LAVADO, TIPO, COSTO_PERSONAL FROM TRABAJADOR 
+            JOIN CITA ON TRABAJADOR.CEDULA_TRABAJADOR = CITA.CEDULA_TRABAJADOR AND CITA.FACTURADA = 'TRUE'
+            JOIN TIPO_PAGO ON TRABAJADOR.ID_PAGO = TIPO_PAGO.ID_TIPO_PAGO
+            JOIN LAVADO ON CITA.NOMBRE_LAVADO = LAVADO.NOMBRE_LAVADO
+            ORDER BY TRABAJADOR.CEDULA_TRABAJADOR, NOMBRE_LAVADO;";
+            var payrollData = GetTableData(payrollQuery);
+            BuildPayroll(payrollData);
+        }
+
+        private void BuildPayroll(DataTable payrollData)
+        {
+            
+            HtmlDocument ReportDoc = new HtmlDocument();
+            ReportDoc.Load(@"Data/File Generation/Templates/planilla.html");
+            var fecha = ReportDoc.GetElementbyId("fecha");
+            fecha.InnerHtml = DateTime.Today.ToShortDateString();
+            var htmlTable = ReportDoc.GetElementbyId("table-body");
+            int payrollTotal = 0;
+            string cedulaAnterior = "";
+            int rowId = 0;
+            if(payrollData.Rows.Count != 0)
+            {
+                for(var index = 0;index < payrollData.Rows.Count;index++)
+                {
+                    if((string)payrollData.Rows[index]["CEDULA_TRABAJADOR"] != cedulaAnterior)
+                    {
+                        rowId++;
+                        cedulaAnterior = (string)payrollData.Rows[index]["CEDULA_TRABAJADOR"];
+                        var nombre_completo = (string)payrollData.Rows[index]["NOMBRE"] +" "+(string)payrollData.Rows[index]["PRIMER_APELLIDO"]+" "+(string)payrollData.Rows[index]["SEGUNDO_APELLIDO"];
+                        var tipo_pago = (string)payrollData.Rows[index]["TIPO"];
+                        var row = $"<tr id =\"{rowId.ToString()}\"><td class=\"text-center\">{nombre_completo}</td><td class=\"text-center\">{tipo_pago}</td><td class=\"text-center\" id={"lavado"+rowId.ToString()}></td><td class=\"text-right\" id={"costo"+rowId.ToString()}></td></tr>";
+                        htmlTable.InnerHtml = htmlTable.InnerHtml + row;
+                        var lavados = ReportDoc.GetElementbyId("lavado"+rowId.ToString());
+                        lavados.InnerHtml = lavados.InnerHtml + "<span class=\"custom-span\">"+(string)payrollData.Rows[index]["NOMBRE_LAVADO"]+"</span><hr>";
+                        var costo = ReportDoc.GetElementbyId("costo"+rowId.ToString());
+                        costo.InnerHtml = costo.InnerHtml + "<span class=\"custom-span\">"+(int)payrollData.Rows[index]["COSTO_PERSONAL"]+"</span><hr>";
+                        payrollTotal = payrollTotal + (int)payrollData.Rows[index]["COSTO_PERSONAL"];
+                    }
+                    else
+                    {
+                        var lavados = ReportDoc.GetElementbyId("lavado"+rowId.ToString());
+                        lavados.InnerHtml = lavados.InnerHtml + "<span class=\"custom-span\">"+(string)payrollData.Rows[index]["NOMBRE_LAVADO"]+"</span><hr>";
+                        var costo = ReportDoc.GetElementbyId("costo"+rowId.ToString());
+                        costo.InnerHtml = costo.InnerHtml + "<span class=\"custom-span\">"+(int)payrollData.Rows[index]["COSTO_PERSONAL"]+"</span><hr>";
+                        payrollTotal = payrollTotal + (int)payrollData.Rows[index]["COSTO_PERSONAL"];
+                    }
+                     
+                }
+            }
+            else
+            {
+                htmlTable.InnerHtml = htmlTable.InnerHtml+
+                "<tr><td class=\"text-center\">Sin datos</td><td class=\"text-center\">Sin datos</td><td class=\"text-center\"><span>Sin datos</span><br></td><td class=\"text-right\"><span>Sin datos</span><br></td></tr>";
+            }
+            ReportDoc.GetElementbyId("total").InnerHtml = payrollTotal.ToString();
+            ReportDoc.Save(@"Data/File Generation/ReportDoc.html");
+            var Renderer = new ChromePdfRenderer();
+            var pdf = Renderer.RenderHtmlFileAsPdf("Data/File Generation/ReportDoc.html");
+            pdf.SaveAs("Data/File Generation/Generated/Reports/Reporte-planilla.pdf");
+            File.Delete("Data/File Generation/ReportDoc.html");
         }
 
         private void WashReport(string cedula)
@@ -125,7 +186,6 @@ namespace DetailTECService.Data
             var nombre_cliente = (string)customerData.Rows[0]["NOMBRE"];
             var primer_apellido_cliente = (string)customerData.Rows[0]["PRIMER_APELLIDO"];
             var segundo_apellido_cliente = (string)customerData.Rows[0]["SEGUNDO_APELLIDO"];
-            washData.Clear();//delete
             washData.DefaultView.Sort = "NOMBRE_LAVADO";
             washData = washData.DefaultView.ToTable();
             BuildWashReport(nombre_cliente,primer_apellido_cliente,segundo_apellido_cliente,cedula,washData);  
