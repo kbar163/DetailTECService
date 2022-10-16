@@ -23,30 +23,15 @@
          <!-- begin invoice-header -->
          <div class="invoice-header">
             <div class="invoice-from">
-               <small >Colaborador a cargo:</small>
                <address class="m-t-5 m-b-5">
-                  <strong class="text-inverse" id="trabajador">Nombre Trabajador</strong><br>
-               </address>
-               <small >Sucursal:</small>
-               <address class="m-t-5 m-b-5">
-                  <strong class="text-inverse" id="sucursal">Nombre Sucursal</strong><br>
-               </address>
-            </div>
-            <div class="invoice-to">
-               <small>Facturado a:</small>
-               <address class="m-t-5 m-b-5">
-                  <strong class="text-inverse" id="cliente">Nombre cliente</strong><br>
-                  <small >Placa del vehiculo</small><br>
-                  <strong id="placa">ABC-123 </strong>
+                  <strong class="text-inverse">Reporte de lavados por cliente</strong><br>
+                  <small id="nombre">nombre apellido apellido</small><br>
+                  <small id="cedula">0000000</small>
                </address>
             </div>
             <div class="invoice-date">
-               <div class="date text-inverse m-t-5">
-                  <small id="fecha">Fecha</small>
-               </div>
-               <div class="date text-inverse m-t-5">
-                  <small id="id">idFactura</small>
-               </div>
+               <small>Fecha de creacion:</small>
+               <div class="date text-inverse m-t-5" id="fecha">Dia,mes,ano</div>
             </div>
          </div>
          <!-- end invoice-header -->
@@ -57,65 +42,20 @@
                <table class="table table-invoice">
                   <thead>
                      <tr>
-                        <th>PRODUCTO</th>
-                        <th class="text-center" width="20%">PAGO CON PUNTOS</th>
-                        <th class="text-center" width="20%">PRECIO</th>
-                        <th class="text-center" width="20%">UNIDADES</th>
-                        <th class="text-right" width="20%">SUB-TOTALES</th>
+                        <th>TIPO DE LAVADO</th>
+                        <th class="text-right" width="20%">CANTIDAD DE LAVADOS</th>
                      </tr>
                   </thead>
-                  <tbody>
-                     <tr>
-                        <td>
-                           <span class="text-inverse" id="lavado">Lavado</span><br>
-                        </td>
-                        <td class="text-center" id="puntos01">SI/NO</td>
-                        <td class="text-center" id="precio01">$50.00</td>
-                        <td class="text-center" id="unidades01">1</td>
-                        <td class="text-right" id="subtotal01">$2,500.00</td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <span class="text-inverse" id="snacks">Snacks</span><br>
-                           
-                        </td>
-                        <td class="text-center" id="puntos02">No aplica</td>
-                        <td class="text-center" id="precio02">$50.00</td>
-                        <td class="text-center" id="unidades02">1</td>
-                        <td class="text-right" id="subtotal02">$2,500.00</td>
-                     </tr>
-                     <tr>
-                        <td>
-                           <span class="text-inverse" id="bebida">Bebidas</span><br>
-                        </td>
-                        <td class="text-center" id="puntos03">No aplica</td>
-                        <td class="text-center" id="precio03">$50.00</td>
-                        <td class="text-center" id="unidades03">1</td>
-                        <td class="text-right" id="subtotal03">$2,500.00</td>
-                     </tr>
+                  <tbody id="table-body">
+                     <!-- <tr>
+                        <td><span class="text-inverse">Dato de visita</span><br></td>
+                        <td class="text-right">1</td>
+                     </tr> -->
                   </tbody>
                </table>
             </div>
             <!-- end table-responsive -->
             <!-- begin invoice-price -->
-            <div class="invoice-price">
-               <div class="invoice-price-right">
-                  <h4>TOTAL</h4> <span class="f-w-600" id="total">$4508.00</span>
-               </div>
-            </div>
-            <!-- end invoice-price -->
-         </div>
-         <!-- end invoice-content -->
-
-         <!-- begin invoice-footer -->
-         <div class="invoice-footer">
-            <p class="text-center m-b-5 f-w-600">
-               Gracias por preferirnos!
-               Recuerde que su primer bebida y snack son cortesía de la casa!
-               Monto unitarios por snacks: ₡1500. 
-                Monto unitarios por bebida: ₡1000. 
-            </p>
-         </div>
          <!-- end invoice-footer -->
       </div>
    </div>
