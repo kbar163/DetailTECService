@@ -194,7 +194,7 @@ namespace DetailTECService.Data
                         Console.WriteLine("Connection to DB stablished");
                         command.ExecuteNonQuery();    
                         response.actualizado = true;
-                        response.mensaje = $"Proveedor {verb} exitosamente";   
+                        response.mensaje = $"Producto {verb} exitosamente";   
                     }
                 }
             }

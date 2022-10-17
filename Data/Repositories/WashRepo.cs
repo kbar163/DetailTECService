@@ -102,11 +102,17 @@ namespace DetailTECService.Data
                 return response;
             }
 
-            response = DeleteDataById(washQuery, deleteName.nombre_lavado);
-            if(response.actualizado)
+            var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
+            var deleteProducts = DeleteDataById(productQuery, deleteName.nombre_lavado);
+            if(deleteRoles.actualizado & deleteProducts.actualizado)
             {
-                var deleteRoles = DeleteDataById(roleQuery, deleteName.nombre_lavado);
-                var deleteProducts = DeleteDataById(productQuery, deleteName.nombre_lavado);
+                response = DeleteDataById(washQuery, deleteName.nombre_lavado);
+            } else {
+                if (!deleteRoles.actualizado) {
+                    response = deleteRoles;
+                } else {
+                    response = deleteProducts;
+                }
             }
     
             return response;
@@ -142,6 +148,7 @@ namespace DetailTECService.Data
                    ex is SqlException || ex is InvalidOperationException)
                 {
                     response.actualizado = false;
+                    response.mensaje = "Error al eliminar lavado";
                 }
             }
 
