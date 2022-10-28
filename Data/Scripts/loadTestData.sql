@@ -11,80 +11,75 @@ VALUES
 
 INSERT INTO CLIENTE
 VALUES 
-('409837345','Erick', 'Barrantes', 'Cerdas', 'correo01@gmail.com', 'user01', 'password01',9, 15, 6),
-('709837345','Manuel', 'Brenes', 'Salazar', 'correo02@gmail.com', 'user02', 'password02',0, 5, 5),
-('609837345','Sofia', 'Ramirez', 'Gomez', 'correo03@gmail.com', 'user03', 'password03',5, 5, 0),
-('209837345','Veronica', 'Sandoval', 'Sanchez', 'correo04@gmail.com', 'user04', 'password04',12, 17, 5);
+('409837345','Erick', 'Barrantes', 'Cerdas', 'correo01@gmail.com', 'kevin', '12345',0, 0, 0);
 
 INSERT INTO TRABAJADOR
 VALUES
-('303450213', '1999-12-07', 'Erick', 'Barrantes', 'Cerdas', 0,1,'2020-01-01','password05'),
-('102340567', '1999-12-07', 'Jose', 'Ramos', 'Rojas', 1,1,'2020-01-01','password06'),
-('207650385', '1999-12-07', 'Maria', 'Nunes', 'Salguero', 1,1,'2020-01-01','password07'),
-('408730769', '1999-12-07', 'Brienne', 'Mejia', 'Lopez', 1,1,'2020-01-01','password08'),
-('222847727', '1999-12-07', 'Ariana', 'Romero', 'Carrillo', 0,1,'2021-01-01','password09'),
-('123121467', '1973-03-02', 'Marco', 'Riversa', 'Meneses', 0,1,'2022-01-01','password10');
+('303450213', '1986-03-23', 'Mariano', 'Vega', 'Arce', 0,1,'2020-02-17','12345'),
+('102340567', '1995-06-07', 'Jose', 'Ramos', 'Rojas', 1,0,'2021-10-10','67890'),
+('207650385', '1989-08-12', 'Maria', 'Neruda', 'Salguero', 2,1,'2022-03-11','maria');
 
 INSERT INTO SUCURSAL
 VALUES
-('Montes de Oca', '25446675', '303450213', 'San José', 'Montes De Oca', 'San Pedro', '2019-01-01','2020-01-01'),
-('San Carlos', '24438899', '222847727', 'Alajuela', 'San Carlos', 'Quesada', '2018-01-01','2021-01-01'),
-('Alajuela', '25128341', '123121467', 'Alajuela', 'Cantón Central', 'Alajuela', '2017-01-01','2022-01-01');
+('Montes de Oca', '25446675', '303450213', 'San José', 'Montes De Oca', 'San Pedro', '2019-12-06','2020-08-19');
 
 INSERT INTO PROVEEDOR
 VALUES
-('2557897','LlantasTEC','2323232','Alajuela','San Carlos','Quesada','LlantasTEC18@gmail.com'),
-('3457897','LlantasUCR','2323232','Cartago','Turrialba','Turrialba','LlantasUCR18@gmail.com'),
-('1237897','LlantasUNA','2323232','San José','Pérez Zeledón','Rivas','LlantasUNA18@gmail.com');
+('2557897','ImportaCarWash','2323232','Alajuela','San Carlos','Quesada','proveedor@importacar.com');
 
 INSERT INTO CLIENTE_TELEFONO
 VALUES
 ('409837345','89881111'),
-('409837345','89882222'),
-('409837345','89883333'),
-('709837345','88871111'),
-('609837345','87861111'),
-('609837345','87862222'),
-('209837345','86851111');
+('409837345','89882222');
 
 INSERT INTO CLIENTE_DIRECCION
 VALUES
 ('409837345','San José','Montes De Oca','San Pedro'),
-('409837345','Cartago','Turrialba','Turrialba'),
-('709837345','Alajuela','Palmares','Palmares'),
-('609837345','Heredia','San Isidro','San Francisco'),
-('209837345','Puntarenas','Coto Brus','San Vito'),
-('209837345','Puntarenas','Coto Brus','Sabalito');
+('409837345','Cartago','Turrialba','Turrialba');
 
 INSERT INTO INSUMO
 VALUES
-('Lubricante','5000','TEC','2557897'),
-('Jabon','12000','UNA','1237897'),
-('Esponja','2300','UCR','3457897');
+('Cera','5000','McGuire','2557897'),
+('Jabon','12000','Patito','2557897'),
+('Aspiradora','50000','Aspirator','2557897'),
+('Nice','3500','Blackout','2557897'),
+('Esponja','2300','Esponjoso','2557897');
 
 INSERT INTO LAVADO
 VALUES
-('Lavado simple',2000,5000,45,5,20),
-('Lavado avanzado',3000,7000,60,10,30);
+('Lavado y aspirado',2000,5000,45,5,20),
+('Lavado encerado',3000,7000,60,10,30),
+('Lavado premium',3000,7000,60,10,30),
+('Pulido',3000,7000,60,10,30);
 
 INSERT INTO LAVADO_INSUMO
 VALUES
-('Lavado simple', 'Jabon'),
-('Lavado avanzado','Jabon'),
-('Lavado avanzado','Esponja');
+('Lavado y aspirado', 'Jabon'),
+('Lavado y aspirado','Esponja'),
+('Lavado y aspirado','Aspiradora'),
+('Lavado encerado', 'Jabon'),
+('Lavado encerado','Esponja'),
+('Lavado encerado','Cera'),
+('Lavado premium','Aspiradora'),
+('Lavado premium', 'Jabon'),
+('Lavado premium','Esponja'),
+('Lavado premium','Cera'),
+('Lavado premium','Nice'),
+('Pulido','Cera');
+
 
 INSERT INTO LAVADO_ROL
 VALUES
-('Lavado simple', 1),
-('Lavado avanzado',1),
-('Lavado avanzado',2);
+('Lavado y aspirado', 1),
+('Lavado encerado', 1),
+('Lavado premium', 1),
+('Lavado premium', 2),
+('Pulido', 2);
 
 INSERT INTO CITA (CEDULA_CLIENTE, PLACA_VEHICULO, NOMBRE_SUCURSAL, NOMBRE_LAVADO, CEDULA_TRABAJADOR, HORA, FACTURADA)
 VALUES
-('209837345','AAA111','Montes de Oca','Lavado simple','102340567','2022-11-16 13:21:11','FALSE'),
-('709837345','BBB111','Montes de Oca','Lavado simple','207650385','2022-10-24 13:21:11','FALSE'),
-('409837345','CCC111','Montes de Oca','Lavado avanzado','408730769','2022-11-03 13:21:11','FALSE'),
-('609837345','DDD111','Montes de Oca','Lavado avanzado','408730769','2022-11-16 16:00:00','FALSE');
+('409837345','CCC111','Montes de Oca','Lavado y aspirado','102340567','2022-11-03 13:00:00','FALSE'),
+('409837345','AAA111','Montes de Oca','Lavado premium','303450213','2022-12-15 15:30:00','FALSE');
 
 
 
