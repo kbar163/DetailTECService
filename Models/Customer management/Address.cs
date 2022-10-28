@@ -4,7 +4,6 @@ namespace DetailTECService.Models
     //usado por el modelo de datos de Customer para mantener los datos de las posibles
     //direcciones de cada cliente.
 
-    
     public class Address
     {
         

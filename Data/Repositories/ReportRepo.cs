@@ -199,7 +199,7 @@ namespace DetailTECService.Data
             CLIENTE.SEGUNDO_APELLIDO
             FROM CLIENTE
             WHERE CLIENTE.CEDULA_CLIENTE = @id";
-
+            
             var customerData = GetDataById(customerQuery, cedula);
             var washData = GetDataById(washQuery,cedula);
             var nombre_cliente = (string)customerData.Rows[0]["NOMBRE"];

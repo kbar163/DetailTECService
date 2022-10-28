@@ -64,8 +64,10 @@ VALUES
 
 INSERT INTO LAVADO
 VALUES
-('Lavado simple',2000,5000,45,5,20),
-('Lavado avanzado',3000,7000,60,10,30);
+('Lavado y aspirado',2000,5000,30,5,20),
+('Lavado encerado',3000,6000,60,10,30),
+('Lavado premium y pulido',5000,8000,60,5,20);
+
 
 INSERT INTO LAVADO_INSUMO
 VALUES
@@ -81,10 +83,10 @@ VALUES
 
 INSERT INTO CITA (CEDULA_CLIENTE, PLACA_VEHICULO, NOMBRE_SUCURSAL, NOMBRE_LAVADO, CEDULA_TRABAJADOR, HORA, FACTURADA)
 VALUES
-('209837345','AAA111','Montes de Oca','Lavado simple','102340567','2022-11-16 13:21:11','FALSE'),
-('709837345','BBB111','Montes de Oca','Lavado simple','207650385','2022-10-24 13:21:11','FALSE'),
-('409837345','CCC111','Montes de Oca','Lavado avanzado','408730769','2022-11-03 13:21:11','FALSE'),
-('609837345','DDD111','Montes de Oca','Lavado avanzado','408730769','2022-11-16 16:00:00','FALSE');
+('209837345','AAA111','Montes de Oca','Lavado simple','102340567','2022-11-16 13:30:00','FALSE'),
+('709837345','BBB111','Montes de Oca','Lavado simple','207650385','2022-10-24 13:00:00','FALSE'),
+('409837345','CCC111','Montes de Oca','Lavado avanzado','408730769','2022-11-03 15:00:00','FALSE'),
+('609837345','DDD111','Montes de Oca','Lavado avanzado','408730769','2022-11-16 06:00:00','FALSE');
 
 
 
